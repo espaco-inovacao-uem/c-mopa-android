@@ -1,0 +1,43 @@
+*.iml
+
+# Mac OS X UNNECESSARY FILES
+*.DS_Store
+
+# Windows UNNECESSARY FILES
+Thumbs.db
+
+# BUILT APPLICATION FILES
+*.apk
+*.ap_
+
+# FILES FOR THE DEX VM
+*.dex
+
+# JAVA CLASS FILES
+*.class
+
+# BUILT NATIVE FILES (uncomment if you build your own)
+# *.o
+# *.so
+
+# GENERATED FILES
+bin/
+gen/
+
+# IGNORE GRADLE FILES
+.gradle/
+build/
+
+/build
+/captures
+.externalNativeBuild
+
+# LOCAL CONFIGURATION FILE (sdk path, etc)
+local.properties
+
+# Intellij IDEA (see https://intellij-support.jetbrains.com/entries/23393067)
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/datasources.xml
+.idea/dataSources.ids
+/.idea/libraries
