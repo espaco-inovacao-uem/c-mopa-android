@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(MainActivity.this,"Begin",Toast.LENGTH_LONG).show();
         Cloud.initialize(new InitializeAppListener() {
+
             @Override
             public void success() {
                 Toast.makeText(MainActivity.this,"Sucesso",Toast.LENGTH_LONG).show();
