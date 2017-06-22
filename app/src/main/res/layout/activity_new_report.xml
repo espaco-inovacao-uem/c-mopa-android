@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="mz.uem.inovacao.fiscaisapp.NewReportActivity">
+
+    <!--Form Basic Info-->
+    <LinearLayout
+        android:id="@+id/formBasicInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <Spinner
+            android:id="@+id/spinnerDistrict"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/districts"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerNeighborhood"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/dummy_neighborhoods"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerReportType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/report_types"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerHouseBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/dummy_house_blocks"
+            android:paddingBottom="16dp"
+            android:paddingTop="8dp"
+            android:visibility="visible"/>
+
+        <Spinner
+            android:id="@+id/spinnerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/dummy_containers"
+            android:paddingBottom="16dp"
+            android:paddingTop="8dp"
+            android:visibility="visible"/>
+
+    </LinearLayout>
+
+    <!--Form Take Picture-->
+
+    <FrameLayout
+        android:id="@+id/formPicture"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        android:background="@color/lightGrey">
+
+        <ImageView
+            android:id="@+id/imageViewPicture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
+
+        <LinearLayout
+            android:id="@+id/layoutPictureHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_add_a_photo"/>
+
+            <TextView
+                android:id="@+id/textViewAddPicture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Adicionar uma fotografia"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+    <!--Form Description-->
+    <LinearLayout
+        android:id="@+id/formDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Descricao"
+            android:inputType="textPersonName"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonNext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimary"
+        android:text="Próximo"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>

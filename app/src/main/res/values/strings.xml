@@ -1,19 +1,68 @@
 <resources>
-    <string name="app_name">FiscaisApp</string>
+    <string name="app_name">c-MOPA</string>
     <string name="title_activity_login">Iniciar Sessão</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Nr de telefone</string>
+    <string name="prompt_phone_number">Nr de telefone</string>
     <string name="prompt_password">Palavra-passe</string>
     <string name="action_sign_in">Iniciar sessão</string>
     <string name="action_sign_in_short">Iniciar sessão</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+
     <string name="prompt_new_password">Nova palavra-passe</string>
     <string name="prompt_confirm_new_password">Confirmar palavra-passe</string>
+
+    <string name="title_activity_new_report">Reportar problema</string>
+
+    <!--MediaPicker strings-->
+    <string name="choose_photo_chooser_title">Escolher fotografia</string>
+    <string name="cancel">Cancelar</string>
+    <string name="add_photo">Adicionar fotografia</string>
+    <string-array name="choose_photo_options">
+        <item>Tirar uma foto</item>
+        <item>Escolher da galeria</item>
+    </string-array>
+
+    <array name="districts">
+        <item>KaMavota</item>
+        <item>KaMaxaquene</item>
+        <item>KaMubukwana</item>
+        <item>Nlhamankulu</item>
+        <item>Kampfumo</item>
+    </array>
+
+    <array name="dummy_neighborhoods">
+        <item>3 de Fevereiro</item>
+        <item>Albazine</item>
+        <item>Costa do Sol</item>
+        <item>FPLM</item>
+        <item>Ferroviario</item>
+        <item>Hulene A</item>
+        <item>Hulene B</item>
+        <item>Laulane</item>
+        <item>Mahotas</item>
+        <item>Mavalane A</item>
+        <item>Mavalane B</item>
+    </array>
+
+    <array name="report_types">
+        <item>Contentor está cheio</item>
+        <item>Contentor a arder</item>
+        <item>Lixo fora do contentor</item>
+        <item>Tchova não passou</item>
+        <item>Amontoado de lixo</item>
+        <item>Contentor está cheio</item>
+    </array>
+
+    <array name="dummy_house_blocks">
+        <item>Quarteirao A</item>
+        <item>Quarteirao B</item>
+        <item>Quarteirao C</item>
+    </array>
+
+    <array name="dummy_containers">
+        <item>Contentor Av. ABC</item>
+        <item>Contentor Esquina DEF com JKL</item>
+        <item>Contentor Verde Branco</item>
+    </array>
+
 </resources>
