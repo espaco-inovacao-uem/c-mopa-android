@@ -1,6 +1,7 @@
 package mz.uem.inovacao.fiscaisapp.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by LIMS06 on 6/4/2016.
@@ -8,20 +9,31 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
-    private String username;
-    private String password;
     //@JsonProperty("id")
     private long id;
+    private String username;
+    private String password;
 
-    private int userId;
+    @JsonProperty("password_expired")
+    private boolean passwordExpired;
 
     public User() {
+
     }
 
     public User(String nome, String password) {
         this.username = nome;
         this.password = password;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
 
     public String getUsername() {
         return username;
@@ -39,19 +51,11 @@ public class User {
         this.password = password;
     }
 
-    public long getId() {
-        return id;
+    public boolean isPasswordExpired() {
+        return passwordExpired;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setPasswordExpired(boolean passwordExpired) {
+        this.passwordExpired = passwordExpired;
     }
 }

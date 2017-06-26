@@ -1,5 +1,7 @@
 package mz.uem.inovacao.fiscaisapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import mz.uem.inovacao.fiscaisapp.utils.CameraUtils;
+import com.bumptech.glide.Glide;
+
+import mz.uem.inovacao.fiscaisapp.utils.MyCameraUtils;
 
 public class NewReportActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,6 +32,9 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
     private EditText editTextDescription;
 
     private Button buttonNext;
+
+    private MyCameraUtils myCameraUtils;
+    private Uri pictureUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,10 +125,41 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
             if (!success) {//reached end of form, should save
                 Toast.makeText(this, "Fim do processo: Salvar report", Toast.LENGTH_SHORT).show();
             }
-        }else if (view == formPicture){
+        } else if (view == formPicture) {
 
-            new CameraUtils(this).showPickMediaDialog();
+            myCameraUtils = new MyCameraUtils(this);
+            myCameraUtils.showPickMediaDialog();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+
+            if (myCameraUtils.isResultInOurDirectory()) {
+
+                pictureUri = Uri.fromFile(myCameraUtils.getPictureTaken());
+
+            } else {
+
+                pictureUri = data.getData();
+            }
+
+            showPicture();
+        } else {
+            Toast.makeText(this, "Falha ao retornar imagem", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void showPicture() {
+
+        layoutPictureHint.setVisibility(View.GONE);
+        imageViewPicture.setVisibility(View.VISIBLE);
+
+        Glide.with(this).load(pictureUri).fitCenter().
+                into(imageViewPicture);
     }
 
     @Override

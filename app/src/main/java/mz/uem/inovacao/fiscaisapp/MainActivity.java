@@ -18,21 +18,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toast.makeText(MainActivity.this, "Initializing cloud", Toast.LENGTH_LONG).show();
-        Cloud.initialize(new InitializeAppListener() {
-
-            @Override
-            public void success() {
-                Toast.makeText(MainActivity.this, "Cloud: Sucesso", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void error(String error) {
-                Toast.makeText(MainActivity.this, "Cloud: Falha" + error, Toast.LENGTH_LONG).show();
-            }
-        });
-
-
         layoutNewReport = findViewById(R.id.layoutNewReport);
         layoutConfirmReport = findViewById(R.id.layoutConfirmReport);
         layoutHistory = findViewById(R.id.layoutHistory);

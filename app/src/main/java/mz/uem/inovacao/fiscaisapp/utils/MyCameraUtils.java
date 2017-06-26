@@ -21,7 +21,7 @@ import mz.uem.inovacao.fiscaisapp.R;
  *
  */
 
-public class CameraUtils {
+public class MyCameraUtils {
 
     private static final int REQUEST_PICK_IMAGE = 1;
     private static final int REQUEST_TAKE_PICTURE = 2;
@@ -33,7 +33,7 @@ public class CameraUtils {
     private String temporaryFileName;
     private int requestMade;
 
-    public CameraUtils(Activity activity) {
+    public MyCameraUtils(Activity activity) {
         this.activity = activity;
     }
 
@@ -154,4 +154,14 @@ public class CameraUtils {
 
         return String.valueOf(val);
     }
+
+    public boolean isResultInOurDirectory(){
+        return requestMade == REQUEST_TAKE_PICTURE;
+    }
+
+    public File getPictureTaken(){
+
+        return new File(getOrCreateMediaDirectory(), temporaryFileName);
+    }
+
 }
