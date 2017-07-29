@@ -53,9 +53,9 @@ public class RecordResponse {
 
 
 
-    public boolean iscomplete(){
+    /*public boolean iscomplete(){
         return complete;
-    }
+    }*/
 
     @Override
     public String toString()  {

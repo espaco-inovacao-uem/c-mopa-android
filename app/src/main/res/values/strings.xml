@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">c-MOPA</string>
+    <string name="app_name">MOPA-FISCAL</string>
     <string name="title_activity_login">Iniciar Sessão</string>
 
     <!-- Strings related to login -->
@@ -17,6 +17,7 @@
     <string name="choose_photo_chooser_title">Escolher fotografia</string>
     <string name="cancel">Cancelar</string>
     <string name="add_photo">Adicionar fotografia</string>
+    <string name="title_activity_my_requests">Meus pedidos</string>
     <string-array name="choose_photo_options">
         <item>Tirar uma foto</item>
         <item>Escolher da galeria</item>
@@ -64,5 +65,18 @@
         <item>Contentor Esquina DEF com JKL</item>
         <item>Contentor Verde Branco</item>
     </array>
+    <string name="title_activity_pedido_validacao_details">Pedido de Validação</string>
+    <string name="title_activity_submit_confirmation">Confirmar ocorrência</string>
+    <string name="ic_action_logout">Terminar sessão</string>
+    <string name="hint_quarteirao">Nr do Quarteirao</string>
+
+    <array name="confirmation_options">
+        <item>Válido</item>
+        <item>Inválido</item>
+        <item>Resolvido</item>
+    </array>
+    <string name="title_activity_history">Meu Histórico</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

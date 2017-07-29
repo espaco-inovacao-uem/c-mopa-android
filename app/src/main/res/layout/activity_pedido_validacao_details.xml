@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    tools:context="mz.uem.inovacao.fiscaisapp.PedidoValidacaoDetailsActivity"
+    >
+
+    <TextView
+        android:id="@+id/textViewLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Dados do Pedido"
+        android:textStyle="bold|italic"/>
+
+    <TextView
+        android:id="@+id/textViewPedidoId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="#12345"/>
+
+    <TextView
+        android:id="@+id/textViewPedidoEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="Validar o estado: Resolvido"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/textViewPedidoData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="4 Setembro as 11:00"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/textViewPedidoDescricao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Descricao:"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/lightGrey"/>
+
+
+    <TextView
+        android:id="@+id/textViewLabel2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Dados da Ocorrência"
+        android:textStyle="bold|italic"/>
+
+    <TextView
+        android:id="@+id/textViewOcorrenciaId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="#1348234"/>
+
+    <TextView
+        android:id="@+id/textViewOcorrenciaCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="Contentor não recolhido"
+        android:textColor="@color/black"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textViewOcorrenciaDataCriacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="28/07/2017, 09:30"
+        android:textColor="@color/black"
+        android:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/textViewOcorrenciaEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="Em progresso"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/textViewOcorrenciaBairro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="Bairro da Costa do Sol"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/textViewOcorrenciaDescricao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Descricao do problema"/>
+
+    <Button
+        android:id="@+id/buttonConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimary"
+        android:text="Confirmar"
+        android:textColor="@color/white"/>
+
+
+</LinearLayout>

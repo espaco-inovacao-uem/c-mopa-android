@@ -1,17 +1,29 @@
 package mz.uem.inovacao.fiscaisapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
+
 /**
- * Created by MauroBanze on 6/19/17.
+ *
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Fiscal {
 
     private int id;
-    private int version;
     private String nome;
     private String apelido;
     private String endereco;
-    private String contacto;
+    @JsonProperty("numero_telefone")
+    private String numeroTelefone;
+
+    @JsonProperty("equipa_by_fiscal1_id")
+    private List <?> serverEquipas;
+
+    @JsonProperty("equipa_by_fiscal2_id")
+    private List<?> serverEquipas2;
 
     public Fiscal() {
 
@@ -25,13 +37,6 @@ public class Fiscal {
         this.id = id;
     }
 
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
 
     public String getNome() {
         return nome;
@@ -58,10 +63,34 @@ public class Fiscal {
     }
 
     public String getContacto() {
-        return contacto;
+        return numeroTelefone;
     }
 
     public void setContacto(String contacto) {
-        this.contacto = contacto;
+        this.numeroTelefone = contacto;
+    }
+
+    public String getNumeroTelefone() {
+        return numeroTelefone;
+    }
+
+    public void setNumeroTelefone(String numeroTelefone) {
+        this.numeroTelefone = numeroTelefone;
+    }
+
+    public List<?> getServerEquipas() {
+        return serverEquipas;
+    }
+
+    public void setServerEquipas(List<?> serverEquipas) {
+        this.serverEquipas = serverEquipas;
+    }
+
+    public List<?> getServerEquipas2() {
+        return serverEquipas2;
+    }
+
+    public void setServerEquipas2(List<?> serverEquipas2) {
+        this.serverEquipas2 = serverEquipas2;
     }
 }

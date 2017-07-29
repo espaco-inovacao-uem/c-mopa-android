@@ -16,11 +16,10 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
     private String objectClassName;
     private GetObjectsListener getObjectsListener;
     private TypeReference typeReference;
-    private QueryBuilder queryBuilder;
+    private FilterBuilder filterBuilder;
 
-
-    public void setQueryBuilder(QueryBuilder queryBuilder) {
-        this.queryBuilder = queryBuilder;
+    public void setFilterBuilder(FilterBuilder filterBuilder) {
+        this.filterBuilder = filterBuilder;
     }
 
     public void setGetObjectsListener(GetObjectsListener getObjectsListener) {
@@ -48,7 +47,7 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
         dbApi.addHeader("X-DreamFactory-Api-Key", AppConstants.API_KEY);
         dbApi.setBasePath(AppConstants.DSP_URL + AppConstants.DSP_URL_SUFIX);
         try {
-            RecordsResponse records = dbApi.getRecords(objectClassName.toLowerCase(),null,queryBuilder.getParams()
+            RecordsResponse records = dbApi.getRecords(objectClassName.toLowerCase(),null,filterBuilder.getFilterString()
                     ,-1,-1,null,null,false,false,null,null,true,"*");
             //log(records.toString());
             return records;

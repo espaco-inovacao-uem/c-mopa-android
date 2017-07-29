@@ -12,39 +12,66 @@ import java.util.Date;
 public class Ocorrencia {
 
     private int id;
-    private int version;
-    private String bairro;
-    private String contentor;
-    private String quarteirao;
-    private String distrito;
-    private Date data;
-    private String descricao;
-
-    @JsonProperty("estado_id")
-    private int estado;
-    private Fiscal fiscal;
-    private int tipo;
 
     @JsonProperty("codigo")
-    private int codigoMOPA;
+    private String codigoMOPA;
+    private Distrito distrito;
+    private String bairro;
+    private String categoria;
+
+    private String contentor;
+    private String quarteirao;
+
+    private String data;
+    private String descricao;
+
+    @JsonProperty("estado")
+    private String estado;
+
+    //@JsonProperty("equipa_id")
+    private Equipa equipa;
+
+    @JsonProperty("url_imagem")
+    private String urlImagem;
+
+    @JsonProperty("equipa_id")
+    private int equipaForeignKey;
+
+    @JsonProperty("distrito_id")
+    private int distritoForeignKey;
+
 
     public Ocorrencia() {
 
     }
 
-    public Ocorrencia(int id, int version, String bairro, String contentor, String quarteirao, String distrito, Date data, String descricao, int estado, Fiscal fiscal, int tipo, int codigoMOPA) {
-        this.id = id;
-        this.version = version;
+    public Ocorrencia(Distrito distrito, String bairro, String categoria, String contentor, String quarteirao,
+                      String data, String descricao, String estado, Equipa equipa) {
+
+        this.distrito = distrito;
         this.bairro = bairro;
+        this.categoria = categoria;
         this.contentor = contentor;
         this.quarteirao = quarteirao;
-        this.distrito = distrito;
         this.data = data;
         this.descricao = descricao;
         this.estado = estado;
-        this.fiscal = fiscal;
-        this.tipo = tipo;
+        this.equipa = equipa;
+    }
+
+    public Ocorrencia(int id, String codigoMOPA, Distrito distrito, String bairro, String categoria,
+                      String contentor, String quarteirao, String data, String descricao, String estado, Equipa equipa) {
+        this.id = id;
         this.codigoMOPA = codigoMOPA;
+        this.distrito = distrito;
+        this.bairro = bairro;
+        this.categoria = categoria;
+        this.contentor = contentor;
+        this.quarteirao = quarteirao;
+        this.data = data;
+        this.descricao = descricao;
+        this.estado = estado;
+        this.equipa = equipa;
     }
 
     public int getId() {
@@ -55,12 +82,20 @@ public class Ocorrencia {
         this.id = id;
     }
 
-    public int getVersion() {
-        return version;
+    public String getCodigoMOPA() {
+        return codigoMOPA;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setCodigoMOPA(String codigoMOPA) {
+        this.codigoMOPA = codigoMOPA;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getBairro() {
@@ -87,19 +122,19 @@ public class Ocorrencia {
         this.quarteirao = quarteirao;
     }
 
-    public String getDistrito() {
+    public Distrito getDistrito() {
         return distrito;
     }
 
-    public void setDistrito(String distrito) {
+    public void setDistrito(Distrito distrito) {
         this.distrito = distrito;
     }
 
-    public Date getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -111,35 +146,43 @@ public class Ocorrencia {
         this.descricao = descricao;
     }
 
-    public int getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
-    public Fiscal getFiscal() {
-        return fiscal;
+    public String getUrlImagem() {
+        return urlImagem;
     }
 
-    public void setFiscal(Fiscal fiscal) {
-        this.fiscal = fiscal;
+    public void setUrlImagem(String urlImagem) {
+        this.urlImagem = urlImagem;
     }
 
-    public int getTipo() {
-        return tipo;
+    public Equipa getEquipa() {
+        return equipa;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
+    public void setEquipa(Equipa equipa) {
+        this.equipa = equipa;
     }
 
-    public int getCodigoMOPA() {
-        return codigoMOPA;
+    public int getEquipaForeignKey() {
+        return equipaForeignKey;
     }
 
-    public void setCodigoMOPA(int codigoMOPA) {
-        this.codigoMOPA = codigoMOPA;
+    public void setEquipaForeignKey(int equipaForeignKey) {
+        this.equipaForeignKey = equipaForeignKey;
+    }
+
+    public int getDistritoForeignKey() {
+        return distritoForeignKey;
+    }
+
+    public void setDistritoForeignKey(int distritoForeignKey) {
+        this.distritoForeignKey = distritoForeignKey;
     }
 }

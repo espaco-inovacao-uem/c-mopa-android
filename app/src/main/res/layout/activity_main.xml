@@ -22,6 +22,37 @@
         app:srcCompat="@drawable/logo_cmm"/>
 
     <LinearLayout
+        android:id="@+id/layoutConfirmReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/card_background"
+        android:clickable="true"
+        android:foreground="?selectableItemBackground"
+        android:orientation="horizontal"
+
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="16dp"
+            android:src="@drawable/ic_check"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Meus pedidos de validação"
+            android:textAllCaps="true"
+            android:textStyle="bold"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/layoutNewReport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,37 +77,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Reportar problema"
-            android:textAllCaps="true"
-            android:textStyle="bold"/>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutConfirmReport"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/card_background"
-        android:clickable="true"
-        android:foreground="?selectableItemBackground"
-        android:orientation="horizontal"
-
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="16dp"
-            android:src="@drawable/ic_check"
-
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Validar problema"
             android:textAllCaps="true"
             android:textStyle="bold"/>
 

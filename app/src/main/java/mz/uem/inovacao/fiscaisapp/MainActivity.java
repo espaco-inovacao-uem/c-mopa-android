@@ -3,11 +3,11 @@ package mz.uem.inovacao.fiscaisapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
-import mz.uem.inovacao.fiscaisapp.listeners.InitializeAppListener;
+import mz.uem.inovacao.fiscaisapp.database.Cache;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,34 +30,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
 
-            case R.id.layoutNewReport:{
+            case R.id.layoutNewReport: {
                 openNewReportActivity();
                 break;
             }
-            case R.id.layoutConfirmReport:{
+            case R.id.layoutConfirmReport: {
                 openConfirmActivity();
                 break;
             }
-            case R.id.layoutHistory:{
+            case R.id.layoutHistory: {
+                openHistoryActivity();
                 break;
             }
         }
     }
 
-    private void openNewReportActivity(){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.action_logout) {
+
+            Cache.clearAll();
+
+            openLoginActivity();
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void openNewReportActivity() {
         Intent intent = new Intent(this, NewReportActivity.class);
         startActivity(intent);
     }
 
-    private void openConfirmActivity(){
-        Intent intent = new Intent(this, ConfirmReportActivity.class);
+    private void openConfirmActivity() {
+        Intent intent = new Intent(this, MyRequestsActivity.class);
         startActivity(intent);
     }
 
-    private void openHistoryActivity(){
-        Intent intent = new Intent(this, NewReportActivity.class);
+    private void openHistoryActivity() {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
+    }
+
+    private void openLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 }

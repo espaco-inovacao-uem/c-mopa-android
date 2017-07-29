@@ -13,7 +13,7 @@ public class QueryBuilder {
 
     public QueryBuilder(String key, String value){
 
-        this.params = key+"%20%3D%20"+value+"" ;
+        this.params = key+"%20%3D%20"+value+" " ;
     }
 
     public void addParam(String key, String value){

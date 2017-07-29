@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "759265584779",
+    "firebase_url": "https://c-mopa.firebaseio.com",
+    "project_id": "c-mopa",
+    "storage_bucket": "c-mopa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759265584779:android:42b780a584ea55b2",
+        "android_client_info": {
+          "package_name": "mz.uem.inovacao.fiscaisapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759265584779-9qvq1bntv1qpreo5vq6jiv1pveq3hntc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mz.uem.inovacao.fiscaisapp",
+            "certificate_hash": "c45218a19021b97a104f64186c569bc1c096a7f3"
+          }
+        },
+        {
+          "client_id": "759265584779-e9oef3g0f31usjt34ip0bef46hbgftp1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw6x1wEXfdYZEhbrd6ID6fQ_5HNPxGKLQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759265584779-e9oef3g0f31usjt34ip0bef46hbgftp1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

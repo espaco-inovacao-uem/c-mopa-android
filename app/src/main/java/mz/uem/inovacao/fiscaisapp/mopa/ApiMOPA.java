@@ -19,7 +19,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import mz.uem.inovacao.fiscaisapp.entities.Categoria;
+import mz.uem.inovacao.fiscaisapp.entities.Distrito;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 
 /**
@@ -30,6 +33,8 @@ public class ApiMOPA {
 
     private Context context;
     private static final String MOPA_REQUESTS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/requests.json";
+    private static final String MOPA_LOCATIONS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/locations.json";
+    private static final String MOPA_CATEGORIES_JSON_URL = "http://www.mopa.co.mz/georeport/v2/services.json";
 
     public ApiMOPA(Context context) {
         this.context = context;
@@ -38,6 +43,17 @@ public class ApiMOPA {
     public void fetchOcorrencias(OccorrenciasResponseListener listener) {
 
         makeRequestOcorrencias(listener);
+    }
+
+    public void fetchCategories(CategoriasResponseListener listener) {
+
+        makeRequestCategories(listener);
+    }
+
+    public void fetchDistritos(DistritosResponseListener listener) {
+
+        makeRequestDistritos(listener);
+
     }
 
     private String mopaUrlWithStartDate() {
@@ -64,8 +80,6 @@ public class ApiMOPA {
                     @Override
                     public void onResponse(String response) {
 
-                        Toast.makeText(context, "MOPA request success",
-                                Toast.LENGTH_LONG).show();
                         ArrayList<Ocorrencia> ocorrencias = extractOcorrencias(response);
                         responseListener.onSuccess(ocorrencias);
                     }
@@ -73,9 +87,6 @@ public class ApiMOPA {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(context, "MOPA request FAILURE:" + error.getMessage(),
-                        Toast.LENGTH_LONG).show();
 
                 error.printStackTrace();
                 /*Log.v("Volley", error.getMessage());
@@ -87,9 +98,6 @@ public class ApiMOPA {
         });
 
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(30000, 5, 2));
-
-        Toast.makeText(context, "Starting MOPA request",
-                Toast.LENGTH_LONG).show();
 
         requestQueue.add(stringRequest);
 
@@ -109,7 +117,7 @@ public class ApiMOPA {
 
                 JSONObject ocorrenciasObject = arrayOcorrencias.getJSONObject(i);
 
-                String id = ocorrenciasObject.getString(MOPA_ID);
+                String idMOPA = ocorrenciasObject.getString(MOPA_ID);
                 String estado = ocorrenciasObject.getString(MOPA_ESTADO);
                 String categoria = ocorrenciasObject.getString(MOPA_CATEGORIA);
                 String descricao = ocorrenciasObject.getString(MOPA_DESCRICAO);
@@ -117,8 +125,13 @@ public class ApiMOPA {
                 String dataCriacao = ocorrenciasObject.getString(MOPA_DATA_CRIACAO);
                 String dataUpdate = ocorrenciasObject.getString(MOPA_DATA_UPTADE);
 
-                Log.v("Ocorrencia", id + "-" + estado + "-" + categoria + "-" + descricao + "-" +
+                Log.v("Ocorrencia", idMOPA + "-" + estado + "-" + categoria + "-" + descricao + "-" +
                         bairro + "-" + dataCriacao + "-" + dataUpdate);
+
+                Ocorrencia ocorrencia = new Ocorrencia(1,idMOPA,null,bairro,categoria,null,null,
+                        dataCriacao,descricao,estado,null);
+
+                ocorrencias.add(ocorrencia);
 
             }
         } catch (JSONException e) {
@@ -131,20 +144,183 @@ public class ApiMOPA {
         return ocorrencias;
     }
 
-    private static final String MOPA_ID = "service_request_id";
-    private static final String MOPA_ESTADO = "service_notice";//Em processo, Resolvido,
+    private void makeRequestCategories(final CategoriasResponseListener listener) {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, MOPA_CATEGORIES_JSON_URL + "?",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+                        ArrayList<Categoria> categorias = extractCategories(response);
+
+                        listener.onSuccess(categorias);
+                    }
+
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+            }
+        });
+
+        requestQueue.add(stringRequest);
+    }
+
+    private ArrayList<Categoria> extractCategories(String requestResponse) {
+
+        ArrayList<Categoria> categorias = new ArrayList<>();
+
+        try {
+            JSONArray arrayCategorias = new JSONArray(requestResponse);
+
+            for (int i = 0; i < arrayCategorias.length(); i++) {
+
+                JSONObject categoriaObject = arrayCategorias.getJSONObject(i);
+
+                JSONArray keywords = categoriaObject.getJSONArray("keywords");
+
+                boolean containsPeriurban = false;
+
+                if (keywords.length() == 2) {//um deles é periurban
+                    containsPeriurban = true;
+
+                } else {
+
+                    if (keywords.getString(0).equals("periurban")) {
+
+                        containsPeriurban = true;
+                    }
+                }
+
+                if (containsPeriurban) {
+                    String id = categoriaObject.getString("service_code");
+                    String nome = categoriaObject.getString("service_name");
+
+                    boolean requiresContentor = false;
+
+                    int serviceCode = Integer.parseInt(id);
+
+                    if (serviceCode == 1 || serviceCode == 2 || serviceCode == 3) {
+                        requiresContentor = true;
+                    }
+
+                    Log.d("Categoria", id + " - " + nome);
+
+                    Categoria categoria = new Categoria(id, nome, requiresContentor);
+                    categorias.add(categoria);
+                }
+            }
+            return categorias;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return categorias;
+    }
+
+
+    private void makeRequestDistritos(final DistritosResponseListener listener) {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                MOPA_LOCATIONS_JSON_URL + "?type=district", new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+                ArrayList<Distrito> distritos = extractDistritos(response);
+                listener.onSuccess(distritos);
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+                error.printStackTrace();
+                listener.onError();
+            }
+
+        });
+
+        requestQueue.add(stringRequest);
+    }
+
+    private ArrayList<Distrito> extractDistritos(String requestResponse) {
+
+        ArrayList<Distrito> distritos = new ArrayList<>();
+
+        try {
+            JSONArray arrayDistritos = new JSONArray(requestResponse);
+
+            for (int i = 0; i < arrayDistritos.length(); i++) {
+
+                JSONObject distritoObject = arrayDistritos.getJSONObject(i);
+
+                String id = distritoObject.getString("location_id");
+                String name = distritoObject.getString("location_name");
+                JSONArray arrayBairros = distritoObject.getJSONArray("neighbourhood");
+
+                ArrayList<String> bairros = new ArrayList<>();
+
+                for (int j = 0; j < arrayBairros.length(); j++) {
+
+                    bairros.add(arrayBairros.getString(j));
+                }
+
+                distritos.add(new Distrito(Integer.valueOf(id), name, bairros));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return distritos;
+    }
+
+
+    public static final String MOPA_ID = "service_request_id";
+    public static final String MOPA_ESTADO = "service_notice";//Em processo, Resolvido,
     // Inv\u00e1lido,Reaberto,Arquivado
-    private static final String MOPA_ESTADO_NOTAS = "status_notes";//resposta dada pelo conselho municipal.
-    private static final String MOPA_DESCRICAO = "description";
-    private static final String MOPA_BAIRRO = "neighbourhood";
-    private static final String MOPA_CATEGORIA = "service_name";//Contentor esta cheio, Vala...
-    private static final String MOPA_DATA_CRIACAO = "requested_datetime";
-    private static final String MOPA_DATA_UPTADE = "updated_datetime";
-    private static final String MOPA_LATITUDE = "lat";
-    private static final String MOPA_LONGITUDE = "long";
+    public static final String MOPA_ESTADO_NOTAS = "status_notes";//resposta dada pelo conselho municipal.
+    public static final String MOPA_DESCRICAO = "description";
+    public static final String MOPA_BAIRRO = "neighbourhood";
+    public static final String MOPA_CATEGORIA = "service_name";//Contentor esta cheio, Vala...
+    public static final String MOPA_DATA_CRIACAO = "requested_datetime";
+    public static final String MOPA_DATA_UPTADE = "updated_datetime";
+    public static final String MOPA_LATITUDE = "lat";
+    public static final String MOPA_LONGITUDE = "long";
 
+    public static final String MOPA_CODIGO_SERVICO = "service_code";
 
-    private static final String MOPA_CODIGO_SERVICO = "service_code";
+    //    public static final String MOPA_LOCATION_
 
+    /**
+     * Mopa Response Listener interfaces
+     */
+    public interface OccorrenciasResponseListener {
+
+        void onSuccess(ArrayList<Ocorrencia> ocorrencias);
+
+        void onError();
+    }
+
+    public interface CategoriasResponseListener {
+
+        void onSuccess(ArrayList<Categoria> categorias);
+
+        void onError();
+    }
+
+    public interface DistritosResponseListener {
+
+        void onSuccess(ArrayList<Distrito> distritos);
+
+        void onError();
+    }
 
 }

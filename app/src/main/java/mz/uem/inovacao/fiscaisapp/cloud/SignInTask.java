@@ -1,6 +1,7 @@
 package mz.uem.inovacao.fiscaisapp.cloud;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +39,8 @@ class SignInTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
 
     @Override
     protected RecordsResponse doInBackground(Void... params) {
+        Log.d("Cloud","SignInTask doInBackground() started");
+
         DbsApi dbApi = new DbsApi();
         dbApi.addHeader("X-DreamFactory-Application-Name", AppConstants.APP_NAME);
         dbApi.addHeader("X-DreamFactory-Session-Token", Cloud.session);
@@ -51,11 +54,14 @@ class SignInTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
             e.printStackTrace();
             errorMsg = e.getMessage();
         }
+
+        Log.d("Cloud","SignInTask doInBackground() finished");
         return null;
     }
     @Override
     protected void onPostExecute(RecordsResponse records) {
 
+        Log.d("Cloud","SignInTask onPostExecute() started");
         if(records == null) {
             signInListener.error(AppConstants.NO_INTERNET_CONNECTION);
             return;
@@ -70,17 +76,21 @@ class SignInTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
                User user = (User) users.get(0);
                //Log.d("ola",user.getUsername()+"");
 
+               Log.d("Cloud","SignInTask starting BCrypt decryption");
                if(BCrypt.checkpw(password, user.getPassword())){
                    //Log.d("Pass certa",user.getUsername()+"");
                    //Cloud.setCurrenteDador(user);
+                   Log.d("Cloud","SignInTask finished BCrypt decryption");
                    signInListener.success(user);
-                   return;
+
                }
                else {
+                   Log.d("Cloud","SignInTask onPostExecute() finished");
                    signInListener.error(AppConstants.WRONG_PASSWORD);
                }
 
            }else{
+               Log.d("Cloud","SignInTask onPostExecute() finished");
                signInListener.error(AppConstants.USER_NOT_FOUND);
            }
 

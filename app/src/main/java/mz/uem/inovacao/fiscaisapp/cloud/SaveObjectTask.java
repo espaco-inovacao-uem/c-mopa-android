@@ -75,7 +75,7 @@ public class SaveObjectTask extends AsyncTask<Void, Void, RecordsResponse> {
 
 
             Log.e("Nome da clasee", cloudObject.getClass().getSimpleName().toLowerCase());
-            RecordsResponse code = dbApi.createRecord(cloudObject.getClass().getSimpleName().toLowerCase(), recordsResponse.getRecord(), null, null, null,null);
+            RecordsResponse code = dbApi.createRecord(cloudObject.getClass().getSimpleName().toLowerCase(), recordsResponse.getRecord(), null, null, null,"*");
             return code;
 
         } catch (Exception e) {

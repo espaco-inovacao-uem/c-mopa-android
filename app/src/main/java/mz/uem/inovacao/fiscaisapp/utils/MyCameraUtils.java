@@ -164,4 +164,5 @@ public class MyCameraUtils {
         return new File(getOrCreateMediaDirectory(), temporaryFileName);
     }
 
+
 }

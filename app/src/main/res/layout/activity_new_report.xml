@@ -23,41 +23,36 @@
             android:id="@+id/spinnerDistrict"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/districts"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"/>
+            />
 
         <Spinner
             android:id="@+id/spinnerNeighborhood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/dummy_neighborhoods"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"/>
+            />
 
         <Spinner
             android:id="@+id/spinnerReportType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/report_types"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"/>
+            />
 
-        <Spinner
+        <EditText
             android:id="@+id/spinnerHouseBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/dummy_house_blocks"
-            android:paddingBottom="16dp"
+            android:paddingBottom="8dp"
+            android:hint="@string/hint_quarteirao"
             android:paddingTop="8dp"
-            android:visibility="visible"/>
+            android:inputType="numberDecimal"
+            android:visibility="gone"/>
 
         <Spinner
             android:id="@+id/spinnerContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/dummy_containers"
-            android:paddingBottom="16dp"
+            android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:visibility="visible"/>
 
@@ -69,8 +64,8 @@
         android:id="@+id/formPicture"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:visibility="gone"
-        android:background="@color/lightGrey">
+        android:background="@color/lightGrey"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageViewPicture"
@@ -122,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Descricao"
+            android:hint="Detalhes adicionais"
             android:inputType="textPersonName"
             />
     </LinearLayout>

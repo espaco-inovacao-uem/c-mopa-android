@@ -3,18 +3,32 @@ package mz.uem.inovacao.fiscaisapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.Random;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import net.danlew.android.joda.JodaTimeAndroid;
+
+import java.util.List;
 
 import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
+import mz.uem.inovacao.fiscaisapp.database.Cache;
+import mz.uem.inovacao.fiscaisapp.entities.Equipa;
+import mz.uem.inovacao.fiscaisapp.entities.Fiscal;
 import mz.uem.inovacao.fiscaisapp.entities.User;
+import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
 import mz.uem.inovacao.fiscaisapp.listeners.InitializeAppListener;
 import mz.uem.inovacao.fiscaisapp.listeners.SignInListener;
+import mz.uem.inovacao.fiscaisapp.listeners.UpdateObjectListener;
+
+import static mz.uem.inovacao.fiscaisapp.database.Cache.equipa;
+import static mz.uem.inovacao.fiscaisapp.database.Cache.fiscal;
+import static mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil.mapper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
@@ -22,8 +36,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button buttonContinue;
 
     private EditText editTextPhoneNumber, editTextPassword, editTextNewPassword, editTextConfirmPassword;
-
-    public User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +65,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void success() {
-                Toast.makeText(LoginActivity.this, "Cloud: Sucesso", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Dreamfactory: inicializado com sucesso", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void error(String error) {
-                Toast.makeText(LoginActivity.this, "Cloud: Falha" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Dreamfactory: Erro ao inicializar" + error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -82,12 +94,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             if (newPassword.equals(confirmPassword)) {
 
-                saveNewPassword(newPassword);
-                saveToUserSession(mUser);
+                saveNewPassword(newPassword, updatePasswordListener);
 
-                openMainActivity();
-
-                toast("Palavra-passe actualizada com sucesso");
             } else {
 
                 toast("Introduza a mesma palavra-passe nos dois campos");
@@ -110,18 +118,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void success(User user) {
 
-            mUser = user;
+            Cache.user = user;
+            fetchEquipaFiscal();
 
             if (isFirstLogin(user)) {
 
-                toast("User encontrado: first login");
                 formLogin.setVisibility(View.GONE);
                 formChangePassword.setVisibility(View.VISIBLE);
 
             } else {
-                toast("User encontrado: all good");
+
                 saveToUserSession(user);
                 openMainActivity();
+                finish();
             }
         }
 
@@ -132,15 +141,64 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    private void saveNewPassword(String newPassword) {
+    private UpdateObjectListener updatePasswordListener = new UpdateObjectListener() {
+
+        @Override
+        public void success(long id) {
+
+            saveToUserSession(Cache.user);
+
+            openMainActivity();
+            toast("Palavra-passe actualizada com sucesso");
+            finish();
+        }
+
+        @Override
+        public void error(String error) {
+            toast("Erro ao actualizar password" + error);
+        }
+    };
+
+    private void saveNewPassword(String newPassword, UpdateObjectListener updatePasswordListener) {
 
         //update password e password_expire fields
+        Cloud.updatePassword(Cache.user, newPassword, updatePasswordListener);
     }
 
     private boolean isFirstLogin(User user) {
 
         return user.isPasswordExpired();
 
+    }
+
+    private void fetchEquipaFiscal() {
+
+        Cloud.getFiscalFromUser(Cache.user, new GetObjectsListener() {
+
+            @Override
+            public void success(List<?> lista) {
+
+                fiscal = (Fiscal) lista.get(0);
+
+                Log.d("Fiscal", fiscal.getApelido());
+
+                List<?> equipasHash = fiscal.getServerEquipas();//lista de equipas. na Pratica é apenas 1.
+                Log.d("Fiscal", "equipas: " + equipasHash);
+
+                List<?> equipas = mapper.convertValue(equipasHash, new TypeReference<List<Equipa>>() {
+                });
+
+                equipa = (Equipa) equipas.get(0);
+                Log.d("Equipa", equipa + "");
+            }
+
+            @Override
+            public void error(String error) {
+
+                Log.e("Fiscal", error);
+                Toast.makeText(LoginActivity.this, "Erro ao buscar FISCAL:" + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /* UI OPERATIONS */
@@ -181,6 +239,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         //DEBUG only option, pra que possa fazer login sem conexao com server
         openMainActivity();
+        finish();
         return true;
     }
 }
