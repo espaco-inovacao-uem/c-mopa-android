@@ -71,7 +71,7 @@
     <string name="hint_quarteirao">Nr do Quarteirao</string>
 
     <array name="confirmation_options">
-        <item>Válido</item>
+        <item>Em processo</item>
         <item>Inválido</item>
         <item>Resolvido</item>
     </array>

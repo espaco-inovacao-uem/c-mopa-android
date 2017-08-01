@@ -119,6 +119,7 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
                         if (wasSuccessful) {
 
+                            setResult(RESULT_OK);
                             finish();
                         }
 
@@ -242,10 +243,18 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
         if (id == android.R.id.home) {
 
+            setResult(RESULT_CANCELED);
             finish();
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

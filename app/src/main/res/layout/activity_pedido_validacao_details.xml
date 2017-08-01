@@ -22,13 +22,6 @@
         android:textStyle="bold|italic"/>
 
     <TextView
-        android:id="@+id/textViewPedidoId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:text="#12345"/>
-
-    <TextView
         android:id="@+id/textViewPedidoEstado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,13 +62,6 @@
         android:textStyle="bold|italic"/>
 
     <TextView
-        android:id="@+id/textViewOcorrenciaId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:text="#1348234"/>
-
-    <TextView
         android:id="@+id/textViewOcorrenciaCategoria"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,14 +78,6 @@
         android:text="28/07/2017, 09:30"
         android:textColor="@color/black"
         android:visibility="visible"/>
-
-    <TextView
-        android:id="@+id/textViewOcorrenciaEstado"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:text="Em progresso"
-        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/textViewOcorrenciaBairro"

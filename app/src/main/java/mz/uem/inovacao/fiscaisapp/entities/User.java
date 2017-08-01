@@ -58,4 +58,8 @@ public class User {
     public void setPasswordExpired(boolean passwordExpired) {
         this.passwordExpired = passwordExpired;
     }
+
+    public boolean isFirstLogin(){
+        return passwordExpired;
+    }
 }

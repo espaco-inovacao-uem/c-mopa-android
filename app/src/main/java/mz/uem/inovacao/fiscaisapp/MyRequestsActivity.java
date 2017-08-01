@@ -1,13 +1,16 @@
 package mz.uem.inovacao.fiscaisapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,70 +26,26 @@ import mz.uem.inovacao.fiscaisapp.mopa.ApiMOPA;
 
 public class MyRequestsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private RecyclerView recyclerViewResults;
-    //private ViewGroup formBasicInfo;
-    //private Button buttonSearch;
-
-    private ApiMOPA mopa;
-
+    private SuperRecyclerView recyclerViewResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_requests);
 
-        //formBasicInfo = (ViewGroup) findViewById(R.id.formBasicInfo);
-
-        /*buttonSearch = (Button) findViewById(R.id.buttonSearch);
-        buttonSearch.setOnClickListener(this);*/
-
-        recyclerViewResults = (RecyclerView) findViewById(R.id.recyclerViewResults);
+        recyclerViewResults = (SuperRecyclerView) findViewById(R.id.recyclerViewResults);
         recyclerViewResults.setLayoutManager(new LinearLayoutManager(MyRequestsActivity.this,
                 LinearLayoutManager.VERTICAL, false));
 
-        /*mopa = new ApiMOPA(this);
-        mopa.fetchOcorrencias(occorrenciasResponseListener);*/
 
         fetchMyRequests();
     }
-
-    /*private void switchViews() {
-
-        if (formBasicInfo.getVisibility() == View.VISIBLE) {
-
-            formBasicInfo.setVisibility(View.GONE);
-            recyclerViewResults.setVisibility(View.VISIBLE);
-
-        } else {
-            formBasicInfo.setVisibility(View.VISIBLE);
-            recyclerViewResults.setVisibility(View.GONE);
-        }
-    }*/
 
     @Override
     public void onClick(View view) {
 
 
     }
-
-    /*ApiMOPA.OccorrenciasResponseListener occorrenciasResponseListener = new ApiMOPA.OccorrenciasResponseListener() {
-
-        @Override
-        public void onSuccess(ArrayList<Ocorrencia> ocorrencias) {
-
-            recyclerViewResults.setAdapter(new PedidosValidacaoListAdapter(ocorrencias, MyRequestsActivity.this));
-
-            //switchViews();
-
-        }
-
-        @Override
-        public void onError() {
-
-            Toast.makeText(MyRequestsActivity.this, "Erro ao buscar ocorrencias do MOPA",
-                    Toast.LENGTH_SHORT).show();
-        }
-    };*/
 
     private void fetchMyRequests() {
 
@@ -95,7 +54,7 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void success(List<?> lista) {
 
-                ArrayList<Pedido> pedidos = new ArrayList<Pedido>();
+                ArrayList<Pedido> pedidos = new ArrayList<>();
 
                 for (int i = 0; i < lista.size(); i++) {
 
@@ -121,5 +80,15 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK){
+
+            Toast.makeText(this, "Actualizando lista", Toast.LENGTH_SHORT).show();
+
+        }
     }
 }

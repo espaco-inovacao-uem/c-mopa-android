@@ -63,7 +63,7 @@ class SignInTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
 
         Log.d("Cloud","SignInTask onPostExecute() started");
         if(records == null) {
-            signInListener.error(AppConstants.NO_INTERNET_CONNECTION);
+            signInListener.error(AppConstants.ERROR_NO_INTERNET_CONNECTION);
             return;
         }
 
@@ -86,12 +86,12 @@ class SignInTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
                }
                else {
                    Log.d("Cloud","SignInTask onPostExecute() finished");
-                   signInListener.error(AppConstants.WRONG_PASSWORD);
+                   signInListener.error(AppConstants.ERROR_WRONG_PASSWORD);
                }
 
            }else{
                Log.d("Cloud","SignInTask onPostExecute() finished");
-               signInListener.error(AppConstants.USER_NOT_FOUND);
+               signInListener.error(AppConstants.ERROR_USER_NOT_FOUND);
            }
 
         }

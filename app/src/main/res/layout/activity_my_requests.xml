@@ -7,11 +7,10 @@
     android:layout_height="match_parent"
     tools:context="mz.uem.inovacao.fiscaisapp.MyRequestsActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <com.malinskiy.superrecyclerview.SuperRecyclerView
         android:id="@+id/recyclerViewResults"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"
+        app:layout_empty="@layout/emptyview"/>
 
 </FrameLayout>

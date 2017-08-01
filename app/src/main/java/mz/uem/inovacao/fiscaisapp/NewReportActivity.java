@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,6 +32,7 @@ import java.util.Date;
 import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
 import mz.uem.inovacao.fiscaisapp.database.Cache;
 import mz.uem.inovacao.fiscaisapp.entities.Categoria;
+import mz.uem.inovacao.fiscaisapp.entities.Contentor;
 import mz.uem.inovacao.fiscaisapp.entities.Distrito;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 import mz.uem.inovacao.fiscaisapp.listeners.SaveObjectListener;
@@ -43,7 +45,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
     private ArrayList<Categoria> categorias;
     private ArrayList<Distrito> distritos;
-
+    private ArrayList<Contentor> contentores;
     private Ocorrencia ocorrencia;
 
     /*FormBasicInfo views*/
@@ -65,6 +67,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
     private Uri pictureUri;
 
     private MaterialDialog savingProgressDialog;
+    private ApiMOPA mopa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,9 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         updateTitle("Reportar - Passo 1");
 
         findViews();
+
+        mopa = new ApiMOPA(this);
+
         requestDistritos();
         requestCategories();
     }
@@ -100,13 +106,13 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         formPicture.setOnClickListener(this);
         buttonNext.setOnClickListener(this);
 
-        spinnerDistrito.setOnItemSelectedListener(listener);
-        spinnerCategoria.setOnItemSelectedListener(listenerCategorias);
+        spinnerDistrito.setOnItemSelectedListener(listenerSpinnerDistrito);
+        spinnerBairro.setOnItemSelectedListener(listenerSpinnerBairro);
+        spinnerCategoria.setOnItemSelectedListener(listenerSpinnerCategorias);
     }
 
     private void requestDistritos() {
 
-        ApiMOPA mopa = new ApiMOPA(this);
         mopa.fetchDistritos(new ApiMOPA.DistritosResponseListener() {
 
             @Override
@@ -129,7 +135,6 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
     private void requestCategories() {
 
-        ApiMOPA mopa = new ApiMOPA(this);
         mopa.fetchCategories(new ApiMOPA.CategoriasResponseListener() {
 
             @Override
@@ -151,6 +156,25 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         });
     }
 
+    private void requestContentores(String bairro) {
+
+        mopa.fetchContentores(bairro, new ApiMOPA.MOPAResponseListener<Contentor>() {
+
+            @Override
+            public void onSuccess(ArrayList<Contentor> contentores) {
+
+                ArrayAdapter<Contentor> adapter = new ArrayAdapter<Contentor>(NewReportActivity.this,
+                        R.layout.support_simple_spinner_dropdown_item, contentores);
+
+                spinnerContentor.setAdapter(adapter);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
 
     /**
      * @return true if successful, false if reached end of forms
@@ -223,7 +247,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         Distrito distrito = distritos.get(spinnerDistrito.getSelectedItemPosition());
         String bairro = distrito.getBairros().get(spinnerBairro.getSelectedItemPosition());
         Categoria categoria = categorias.get(spinnerCategoria.getSelectedItemPosition());
-        Date data = DateTime.now().toDate();
+        //Date data = DateTime.now().toDate();
         String descricao = editTextDescricao.getText().toString();
         String estado = "valido";
 
@@ -332,6 +356,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
                     }
                 })
+                .canceledOnTouchOutside(false)
                 .build().show();
 
     }
@@ -386,7 +411,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         super.onBackPressed();
     }
 
-    AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+    AdapterView.OnItemSelectedListener listenerSpinnerDistrito = new AdapterView.OnItemSelectedListener() {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -406,7 +431,42 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         }
     };
 
-    AdapterView.OnItemSelectedListener listenerCategorias = new AdapterView.OnItemSelectedListener() {
+    AdapterView.OnItemSelectedListener listenerSpinnerBairro = new AdapterView.OnItemSelectedListener() {
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+            Distrito distrito = distritos.get(spinnerDistrito.getSelectedItemPosition());
+            String bairro = distrito.getBairros().get(spinnerBairro.getSelectedItemPosition());
+
+            mopa.fetchContentores(bairro, new ApiMOPA.MOPAResponseListener<Contentor>() {
+
+                @Override
+                public void onSuccess(ArrayList<Contentor> contentores) {
+
+                    NewReportActivity.this.contentores = contentores;
+
+                    ArrayAdapter<Contentor> adapter = new ArrayAdapter<>(NewReportActivity.this,
+                            R.layout.support_simple_spinner_dropdown_item, contentores);
+
+                    spinnerContentor.setAdapter(adapter);
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
+
+    AdapterView.OnItemSelectedListener listenerSpinnerCategorias = new AdapterView.OnItemSelectedListener() {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -430,4 +490,16 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import mz.uem.inovacao.fiscaisapp.entities.Categoria;
+import mz.uem.inovacao.fiscaisapp.entities.Contentor;
 import mz.uem.inovacao.fiscaisapp.entities.Distrito;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 
@@ -36,8 +37,11 @@ public class ApiMOPA {
     private static final String MOPA_LOCATIONS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/locations.json";
     private static final String MOPA_CATEGORIES_JSON_URL = "http://www.mopa.co.mz/georeport/v2/services.json";
 
+    private RequestQueue requestQueue;
+
     public ApiMOPA(Context context) {
         this.context = context;
+        requestQueue = Volley.newRequestQueue(context);
     }
 
     public void fetchOcorrencias(OccorrenciasResponseListener listener) {
@@ -54,6 +58,11 @@ public class ApiMOPA {
 
         makeRequestDistritos(listener);
 
+    }
+
+    public void fetchContentores(String bairro, MOPAResponseListener<Contentor> listener){
+
+        makeRequestContentores(bairro, listener);
     }
 
     private String mopaUrlWithStartDate() {
@@ -73,7 +82,6 @@ public class ApiMOPA {
      */
     private void makeRequestOcorrencias(final OccorrenciasResponseListener responseListener) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mopaUrlWithStartDate(),
                 new Response.Listener<String>() {
 
@@ -128,8 +136,8 @@ public class ApiMOPA {
                 Log.v("Ocorrencia", idMOPA + "-" + estado + "-" + categoria + "-" + descricao + "-" +
                         bairro + "-" + dataCriacao + "-" + dataUpdate);
 
-                Ocorrencia ocorrencia = new Ocorrencia(1,idMOPA,null,bairro,categoria,null,null,
-                        dataCriacao,descricao,estado,null);
+                Ocorrencia ocorrencia = new Ocorrencia(1, idMOPA, null, bairro, categoria, null, null,
+                        dataCriacao, descricao, estado, null);
 
                 ocorrencias.add(ocorrencia);
 
@@ -146,7 +154,6 @@ public class ApiMOPA {
 
     private void makeRequestCategories(final CategoriasResponseListener listener) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, MOPA_CATEGORIES_JSON_URL + "?",
                 new Response.Listener<String>() {
 
@@ -222,10 +229,8 @@ public class ApiMOPA {
         return categorias;
     }
 
-
     private void makeRequestDistritos(final DistritosResponseListener listener) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 MOPA_LOCATIONS_JSON_URL + "?type=district", new Response.Listener<String>() {
 
@@ -282,6 +287,54 @@ public class ApiMOPA {
         return distritos;
     }
 
+    private void makeRequestContentores(String bairro, final MOPAResponseListener<Contentor> listener) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                MOPA_LOCATIONS_JSON_URL + "?type=container&neighbourhood=" + bairro,
+
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+                        ArrayList<Contentor> contentores = extractContentores(response);
+                        listener.onSuccess(contentores);
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                error.printStackTrace();
+                listener.onError();
+            }
+        });
+
+        requestQueue.add(stringRequest);
+    }
+
+    private ArrayList<Contentor> extractContentores(String requestResponse){
+
+        ArrayList<Contentor> contentores = new ArrayList<>();
+
+        try {
+            JSONArray arrayContentores = new JSONArray(requestResponse);
+
+            for (int i = 0; i < arrayContentores.length(); i++) {
+
+                JSONObject contentorObject = arrayContentores.getJSONObject(i);
+
+                String id = contentorObject.getString("location_id");
+                String name = contentorObject.getString("location_name");
+
+                contentores.add(new Contentor(id,name));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return contentores;
+    }
 
     public static final String MOPA_ID = "service_request_id";
     public static final String MOPA_ESTADO = "service_notice";//Em processo, Resolvido,
@@ -319,6 +372,20 @@ public class ApiMOPA {
     public interface DistritosResponseListener {
 
         void onSuccess(ArrayList<Distrito> distritos);
+
+        void onError();
+    }
+
+    public interface ContentoresResponseListener {
+
+        void onSuccess(ArrayList<Contentor> contentores);
+
+        void onError();
+    }
+
+    public interface MOPAResponseListener<E> {
+
+        void onSuccess(ArrayList<E> objectos);
 
         void onError();
     }

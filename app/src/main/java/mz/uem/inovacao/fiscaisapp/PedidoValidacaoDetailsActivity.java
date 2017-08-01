@@ -8,6 +8,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.format.DateFormat;
 import android.text.style.StyleSpan;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,10 +25,10 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
     private Pedido pedido;
     private Ocorrencia ocorrencia;
 
-    private TextView textViewOcorrenciaId, textViewOcorrenciaCategoria, textViewOcorrenciaEstado,
-            textViewOcorrenciaBairro, textViewOcorrenciaDescricao, textViewOcorrenciaDataCriacao;
+    private TextView textViewOcorrenciaCategoria, textViewOcorrenciaBairro,
+            textViewOcorrenciaDescricao, textViewOcorrenciaDataCriacao;
 
-    private TextView textViewPedidoId, textViewPedidoEstado, textViewPedidoData,
+    private TextView textViewPedidoEstado, textViewPedidoData,
             textViewPedidoDescricao;
 
     private Button buttonConfirm;
@@ -37,14 +38,11 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_validacao_details);
 
-        textViewOcorrenciaId = (TextView) findViewById(R.id.textViewOcorrenciaId);
         textViewOcorrenciaCategoria = (TextView) findViewById(R.id.textViewOcorrenciaCategoria);
-        textViewOcorrenciaEstado = (TextView) findViewById(R.id.textViewOcorrenciaEstado);
         textViewOcorrenciaBairro = (TextView) findViewById(R.id.textViewOcorrenciaBairro);
         textViewOcorrenciaDescricao = (TextView) findViewById(R.id.textViewOcorrenciaDescricao);
         textViewOcorrenciaDataCriacao = (TextView) findViewById(R.id.textViewOcorrenciaDataCriacao);
 
-        textViewPedidoId = (TextView) findViewById(R.id.textViewPedidoId);
         textViewPedidoEstado = (TextView) findViewById(R.id.textViewPedidoEstado);
         textViewPedidoData = (TextView) findViewById(R.id.textViewPedidoData);
         textViewPedidoDescricao = (TextView) findViewById(R.id.textViewPedidoDescricao);
@@ -79,14 +77,11 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
 
     private void populateFields() {
 
-        textViewPedidoId.setText("#" + pedido.getId() + "");
         textViewPedidoEstado.setText("Validar estado:" + pedido.getEstado() + "");
         textViewPedidoData.setText(pedido.getDataRegisto());
         textViewPedidoDescricao.setText(pedido.getDescricao());
 
-        textViewOcorrenciaId.setText("#" + ocorrencia.getCodigoMOPA() + "");
         textViewOcorrenciaCategoria.setText(ocorrencia.getCategoria());
-        textViewOcorrenciaEstado.setText("Estado: " + ocorrencia.getEstado() + "");
         textViewOcorrenciaBairro.setText("Bairro: " + ocorrencia.getBairro() + "");
         textViewOcorrenciaDescricao.setText(ocorrencia.getDescricao());
         textViewOcorrenciaDataCriacao.setText(ocorrencia.getData());
@@ -105,11 +100,39 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
 
         Intent intent = new Intent(PedidoValidacaoDetailsActivity.this,
                 SubmitConfirmationActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 0);
 
     }
 
     private String getFormatedDate(Date date) {
         return DateFormat.format("yyyy-MM-dd hh:mm:ss a", date).toString();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {//ocorrencia foi salva
+
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            setResult(RESULT_CANCELED);
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

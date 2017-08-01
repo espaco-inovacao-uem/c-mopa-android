@@ -33,6 +33,8 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import static mz.uem.inovacao.fiscaisapp.database.Cache.equipa;
+
 public class Cloud {
 
     public static String session;
@@ -143,7 +145,7 @@ public class Cloud {
         saveObject(ocorrencia, listener);
     }
 
-    public static void saveValidacao(Validacao validacao, SaveObjectListener listener){
+    public static void saveValidacao(Validacao validacao, SaveObjectListener listener) {
 
         validacao.setServerPedidoValidacao(validacao.getPedidoValidacao().getId());
         Cloud.saveObject(validacao, listener);
@@ -170,14 +172,19 @@ public class Cloud {
                 }, listener);
     }
 
-    public static void getFiscalOcorrencias(Fiscal fiscal, GetObjectsListener listener){
+    public static void getEquipaOcorrencias(Equipa equipa, GetObjectsListener listener) {
 
-        
+        Cloud.getObjects("Ocorrencia", new FilterBuilder("equipa_id", equipa.getId() + ""),
+                new TypeReference<List<Ocorrencia>>() {
+                }, listener);
 
     }
 
-    public static void getFiscalValidacoes(Fiscal fiscal, GetObjectsListener listener){
+    public static void getFiscalValidacoes(Fiscal fiscal, GetObjectsListener listener) {
 
+        Cloud.getObjects("Validação", new FilterBuilder("equipa_id", equipa.getId() + ""),
+                new TypeReference<List<Ocorrencia>>() {
+                }, listener);
 
     }
 }
