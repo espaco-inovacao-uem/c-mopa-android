@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mz.uem.inovacao.fiscaisapp.adapters.OcorrenciaHistoryListAdapter;
+import mz.uem.inovacao.fiscaisapp.adapters.ValidacaoHistoryListAdapter;
 import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
 import mz.uem.inovacao.fiscaisapp.database.Cache;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
+import mz.uem.inovacao.fiscaisapp.entities.Validacao;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
 
 public class HistoryActivity extends AppCompatActivity {
@@ -101,6 +103,53 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
+    public static class ValidacoesHistoryFragment extends Fragment {
+
+        private SuperRecyclerView recyclerView;
+
+        public ValidacoesHistoryFragment() {
+
+        }
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_history_ocorrencias, container, false);
+
+            recyclerView = (SuperRecyclerView) rootView.findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),
+                    LinearLayoutManager.VERTICAL, false));
+
+            fetchValidacoes();
+            return rootView;
+        }
+
+        private void fetchValidacoes() {
+            Cloud.getEquipaValidacoes(Cache.equipa, new GetObjectsListener() {
+
+                @Override
+                public void success(List<?> lista) {
+
+                    ArrayList<Validacao> validacoes = new ArrayList<>();
+
+                    for (int i = 0; i < lista.size(); i++) {
+
+                        Validacao validacao = (Validacao) lista.get(i);
+                        validacoes.add(validacao);
+                    }
+
+                    recyclerView.setAdapter(new ValidacaoHistoryListAdapter(validacoes, getActivity()));
+                }
+
+                @Override
+                public void error(String error) {
+
+                    Log.e("History", error);
+                }
+            });
+        }
+    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -111,7 +160,12 @@ public class HistoryActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
 
-            return new OcorrenciasHistoryFragment();
+            if (position == 0) {
+                return new OcorrenciasHistoryFragment();
+
+            } else {
+                return new ValidacoesHistoryFragment();
+            }
         }
 
         @Override

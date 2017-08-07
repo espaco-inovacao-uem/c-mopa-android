@@ -11,6 +11,10 @@ public class FilterBuilder {
 
     private String sqlWhereClause;
 
+    public FilterBuilder() {
+        sqlWhereClause = "";
+    }
+
     public FilterBuilder(String key, String value) {
         sqlWhereClause = "";
         equalTo(key, value);
@@ -19,21 +23,21 @@ public class FilterBuilder {
 
     //******** Condition creators ***************
 
-    public FilterBuilder equalTo(String key, String value){
+    public FilterBuilder equalTo(String key, String value) {
 
-        sqlWhereClause+=  key + "=" + value;
+        sqlWhereClause += "(" + key + "%3D" + value + ")";
         return this;
     }
 
     //********  Condition relationships  *******
 
-    public FilterBuilder and(){
+    public FilterBuilder and() {
 
-        sqlWhereClause+= "AND";
+        sqlWhereClause += "%20AND%20";
         return this;
     }
 
-    public String getFilterString(){
+    public String getFilterString() {
 
         Log.v("Filter Builder", sqlWhereClause);
         return sqlWhereClause;

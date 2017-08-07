@@ -2,6 +2,7 @@ package mz.uem.inovacao.fiscaisapp.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -13,8 +14,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 
+import id.zelory.compressor.Compressor;
 import mz.uem.inovacao.fiscaisapp.R;
 
 /**
@@ -155,14 +158,29 @@ public class MyCameraUtils {
         return String.valueOf(val);
     }
 
-    public boolean isResultInOurDirectory(){
+    public boolean isResultInOurDirectory() {
         return requestMade == REQUEST_TAKE_PICTURE;
     }
 
-    public File getPictureTaken(){
+    public File getPictureTaken() {
 
         return new File(getOrCreateMediaDirectory(), temporaryFileName);
     }
 
+    public File compressImage(File originalImage) {
 
+        try {
+
+            File compressedFile = new Compressor(activity).compressToFile(originalImage, "compressed_" + originalImage.getName());
+
+            originalImage.delete();
+
+            return FileUtils.copyFile(compressedFile, getOrCreateMediaDirectory(), compressedFile.getName());
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

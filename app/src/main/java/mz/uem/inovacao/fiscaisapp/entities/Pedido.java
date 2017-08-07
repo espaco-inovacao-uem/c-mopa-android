@@ -27,6 +27,8 @@ public class Pedido {
     @JsonIgnore
     private Ocorrencia ocorrencia;
 
+    private boolean validado;
+
     public Pedido() {
 
     }
@@ -96,6 +98,13 @@ public class Pedido {
         this.ocorrencia = ocorrencia;
     }
 
+    public boolean isValidado() {
+        return validado;
+    }
+
+    public void setValidado(boolean validado) {
+        this.validado = validado;
+    }
 
     public static final String EXTRA_ID = "PEDIDO_ID";
     public static final String EXTRA_DESCRICAO = "PEDIDO_DESCRICAO";

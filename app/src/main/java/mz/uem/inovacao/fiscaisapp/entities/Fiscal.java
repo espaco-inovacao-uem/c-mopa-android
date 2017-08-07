@@ -15,7 +15,7 @@ public class Fiscal {
     private int id;
     private String nome;
     private String apelido;
-    private String endereco;
+
     @JsonProperty("numero_telefone")
     private String numeroTelefone;
 
@@ -52,14 +52,6 @@ public class Fiscal {
 
     public void setApelido(String apelido) {
         this.apelido = apelido;
-    }
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
     }
 
     public String getContacto() {

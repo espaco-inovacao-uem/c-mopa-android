@@ -1,16 +1,26 @@
 package mz.uem.inovacao.fiscaisapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 /**
  *
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Distrito {
 
     private int id;
     private String nome;
 
+    @JsonIgnore
+    private double latitude;
+    @JsonIgnore
+    private double longitude;
+    @JsonIgnore
     private ArrayList<String> bairros;
 
     public Distrito() {
@@ -42,6 +52,22 @@ public class Distrito {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public ArrayList<String> getBairros() {

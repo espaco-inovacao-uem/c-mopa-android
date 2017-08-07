@@ -1,14 +1,12 @@
 package mz.uem.inovacao.fiscaisapp.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  *
  */
 
 public class Categoria {
 
-    private String mopaId;
+    private String mopaId; //service_code do Mopa
     private String nome;
     private boolean requiresContentor;
 

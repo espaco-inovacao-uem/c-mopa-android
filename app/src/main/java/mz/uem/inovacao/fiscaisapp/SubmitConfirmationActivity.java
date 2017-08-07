@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
 import mz.uem.inovacao.fiscaisapp.database.Cache;
 import mz.uem.inovacao.fiscaisapp.entities.Validacao;
 import mz.uem.inovacao.fiscaisapp.listeners.SaveObjectListener;
+import mz.uem.inovacao.fiscaisapp.listeners.UpdateObjectListener;
 import mz.uem.inovacao.fiscaisapp.utils.MyCameraUtils;
 
 public class SubmitConfirmationActivity extends AppCompatActivity implements View.OnClickListener {
@@ -181,7 +183,7 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
         Date data = new Date();
         String estado = (String) spinnerEstado.getSelectedItem();
 
-        validacao = new Validacao(data, descricao, estado, null, Cache.pedidoValidacao);
+        validacao = new Validacao(data.toString(), descricao, estado, null, Cache.pedidoValidacao, Cache.equipa);
 
     }
 
@@ -192,8 +194,23 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
             @Override
             public void success(Object object) {
 
-                hideSavingProgressDialog();
-                showSaveResultDialog(true, null);
+                Cache.pedidoValidacao.setValidado(true);
+                Cloud.updatePedidoValidacao(Cache.pedidoValidacao, new UpdateObjectListener() {
+                    @Override
+                    public void success(long id) {
+
+                        Toast.makeText(SubmitConfirmationActivity.this, "Updated:" + id, Toast.LENGTH_SHORT).show();
+                        hideSavingProgressDialog();
+                        showSaveResultDialog(true, null);
+                    }
+
+                    @Override
+                    public void error(String error) {
+                        Log.e("Pedido", error);
+                        Toast.makeText(SubmitConfirmationActivity.this, "Erro ao actualizar pedido", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
 
             }
 

@@ -20,7 +20,7 @@ public class Ocorrencia {
     private String categoria;
 
     private String contentor;
-    private String quarteirao;
+    //private String quarteirao;
 
     private String data;
     private String descricao;
@@ -28,16 +28,15 @@ public class Ocorrencia {
     @JsonProperty("estado")
     private String estado;
 
-    //@JsonProperty("equipa_id")
     private Equipa equipa;
 
     @JsonProperty("url_imagem")
     private String urlImagem;
 
-    @JsonProperty("equipa_id")
+    @JsonProperty("equipa_id")// important for server
     private int equipaForeignKey;
 
-    @JsonProperty("distrito_id")
+    @JsonProperty("distrito_id")// important for server
     private int distritoForeignKey;
 
 
@@ -45,33 +44,35 @@ public class Ocorrencia {
 
     }
 
-    public Ocorrencia(Distrito distrito, String bairro, String categoria, String contentor, String quarteirao,
+    public Ocorrencia(Distrito distrito, String bairro, String categoria, String contentor,
                       String data, String descricao, String estado, Equipa equipa) {
 
         this.distrito = distrito;
         this.bairro = bairro;
         this.categoria = categoria;
         this.contentor = contentor;
-        this.quarteirao = quarteirao;
+        //this.quarteirao = quarteirao;
         this.data = data;
         this.descricao = descricao;
         this.estado = estado;
         this.equipa = equipa;
+        setUrlImagem("");
+
     }
 
     public Ocorrencia(int id, String codigoMOPA, Distrito distrito, String bairro, String categoria,
-                      String contentor, String quarteirao, String data, String descricao, String estado, Equipa equipa) {
+                      String contentor, String data, String descricao, String estado, Equipa equipa) {
         this.id = id;
         this.codigoMOPA = codigoMOPA;
         this.distrito = distrito;
         this.bairro = bairro;
         this.categoria = categoria;
         this.contentor = contentor;
-        this.quarteirao = quarteirao;
         this.data = data;
         this.descricao = descricao;
         this.estado = estado;
         this.equipa = equipa;
+        setUrlImagem("");
     }
 
     public int getId() {
@@ -114,13 +115,13 @@ public class Ocorrencia {
         this.contentor = contentor;
     }
 
-    public String getQuarteirao() {
+    /*public String getQuarteirao() {
         return quarteirao;
     }
 
     public void setQuarteirao(String quarteirao) {
         this.quarteirao = quarteirao;
-    }
+    }*/
 
     public Distrito getDistrito() {
         return distrito;

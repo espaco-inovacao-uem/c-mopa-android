@@ -10,7 +10,8 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import mz.uem.inovacao.fiscaisapp.dreamfactory.api.UserApi;
+import mz.uem.inovacao.fiscaisapp.entities.Alocacao;
+import mz.uem.inovacao.fiscaisapp.entities.Distrito;
 import mz.uem.inovacao.fiscaisapp.entities.Equipa;
 import mz.uem.inovacao.fiscaisapp.entities.Fiscal;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
@@ -19,7 +20,6 @@ import mz.uem.inovacao.fiscaisapp.entities.User;
 import mz.uem.inovacao.fiscaisapp.entities.Validacao;
 import mz.uem.inovacao.fiscaisapp.listeners.GetFileListener;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
-import mz.uem.inovacao.fiscaisapp.listeners.GetPedidosValidacaoListener;
 import mz.uem.inovacao.fiscaisapp.listeners.InitializeAppListener;
 import mz.uem.inovacao.fiscaisapp.listeners.SaveFileListener;
 import mz.uem.inovacao.fiscaisapp.listeners.SaveObjectListener;
@@ -27,7 +27,6 @@ import mz.uem.inovacao.fiscaisapp.listeners.SignInListener;
 import mz.uem.inovacao.fiscaisapp.listeners.SignUpListener;
 import mz.uem.inovacao.fiscaisapp.listeners.UpdateObjectListener;
 import mz.uem.inovacao.fiscaisapp.utils.BCrypt;
-import mz.uem.inovacao.fiscaisapp.utils.QueryBuilder;
 
 import java.io.File;
 import java.util.Date;
@@ -148,6 +147,7 @@ public class Cloud {
     public static void saveValidacao(Validacao validacao, SaveObjectListener listener) {
 
         validacao.setServerPedidoValidacao(validacao.getPedidoValidacao().getId());
+        validacao.setServerEquipa(validacao.getEquipa().getId());
         Cloud.saveObject(validacao, listener);
     }
 
@@ -167,11 +167,24 @@ public class Cloud {
 
     public static void getPedidosValidacao(Equipa equipa, GetObjectsListener listener) {
 
-        Cloud.getObjects("Pedido", new FilterBuilder("equipa_id", equipa.getId() + ""),
+        Cloud.getObjects("Pedido", new FilterBuilder("equipa_id", equipa.getId() + "")
+                        .and().equalTo("validado", "false"),
                 new TypeReference<List<Pedido>>() {
                 }, listener);
     }
 
+    public static void getPedidosValidacao(Distrito distrito, GetObjectsListener listener) {
+
+        Cloud.getObjects("Pedido", new FilterBuilder("distrito_id", distrito.getId() + "")
+                        .and().equalTo("validado", "false"),
+                new TypeReference<List<Pedido>>() {
+                }, listener);
+    }
+
+    public static void updatePedidoValidacao(Pedido pedido, UpdateObjectListener listener){
+        updateObject(pedido, pedido.getId(), listener);
+
+    }
     public static void getEquipaOcorrencias(Equipa equipa, GetObjectsListener listener) {
 
         Cloud.getObjects("Ocorrencia", new FilterBuilder("equipa_id", equipa.getId() + ""),
@@ -180,11 +193,20 @@ public class Cloud {
 
     }
 
-    public static void getFiscalValidacoes(Fiscal fiscal, GetObjectsListener listener) {
+    public static void getEquipaValidacoes(Equipa equipa, GetObjectsListener listener) {
 
-        Cloud.getObjects("Validação", new FilterBuilder("equipa_id", equipa.getId() + ""),
-                new TypeReference<List<Ocorrencia>>() {
+        Cloud.getObjects("Validacao", new FilterBuilder("equipa_id", equipa.getId() + ""),
+                new TypeReference<List<Validacao>>() {
                 }, listener);
+
+    }
+
+    public static void getAlocacao(Equipa equipa, GetObjectsListener listener) {
+
+        Cloud.getObjects("Alocacao", new FilterBuilder("equipa_id", equipa.getId() + ""),
+                new TypeReference<List<Alocacao>>() {
+                }, listener);
+
 
     }
 }

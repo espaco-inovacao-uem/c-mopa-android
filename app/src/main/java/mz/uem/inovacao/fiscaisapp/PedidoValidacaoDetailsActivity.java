@@ -69,7 +69,7 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
         String dateString = intent.getStringExtra(ApiMOPA.MOPA_DATA_CRIACAO);
 
 
-        ocorrencia = new Ocorrencia(1, ocorrenciaId, null, bairro, categoria, null, null,
+        ocorrencia = new Ocorrencia(1, ocorrenciaId, null, bairro, categoria, null,
                 dateString, ocorrenciaDescricao, ocorrenciaEstado, null);
 
         populateFields();

@@ -1,10 +1,13 @@
 package mz.uem.inovacao.fiscaisapp.mopa;
 
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,13 +21,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import mz.uem.inovacao.fiscaisapp.entities.Categoria;
 import mz.uem.inovacao.fiscaisapp.entities.Contentor;
 import mz.uem.inovacao.fiscaisapp.entities.Distrito;
+import mz.uem.inovacao.fiscaisapp.entities.Fiscal;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
+import mz.uem.inovacao.fiscaisapp.listeners.SaveObjectListener;
 
 /**
  * Responsavel por fazer requisicoes à API do MOPA. A API do MOPA usa
@@ -33,9 +41,17 @@ import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 public class ApiMOPA {
 
     private Context context;
+
+    private static final String MOPA_TESTE_REQUESTS_JSON_URL = "http://dev.opengov.cc/georeport/v2/requests.json";
+    private static final String MOPA_TESTE_LOCATIONS_JSON_URL = "http://dev.opengov.cc/georeport/v2/locations.json";
+    private static final String MOPA_TESTE_CATEGORIES_JSON_URL = "http://dev.opengov.cc/georeport/v2/services.json";
+    private static final String MOPA_TESTE_POST_URL = "http://dev.opengov.cc/georeport/v2/requests.xml";
+
     private static final String MOPA_REQUESTS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/requests.json";
     private static final String MOPA_LOCATIONS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/locations.json";
     private static final String MOPA_CATEGORIES_JSON_URL = "http://www.mopa.co.mz/georeport/v2/services.json";
+    private static final String MOPA_POST_URL = "http://www.mopa.co.mz/georeport/v2/requests.xml";
+
 
     private RequestQueue requestQueue;
 
@@ -44,25 +60,37 @@ public class ApiMOPA {
         requestQueue = Volley.newRequestQueue(context);
     }
 
-    public void fetchOcorrencias(OccorrenciasResponseListener listener) {
+    /*
+     * PUBLIC OUTSIDE METHODS
+     */
+    public void fetchOcorrencias(GetResponseListener<Ocorrencia> listener) {
 
         makeRequestOcorrencias(listener);
     }
 
-    public void fetchCategories(CategoriasResponseListener listener) {
+    public void fetchCategories(GetResponseListener<Categoria> listener) {
 
         makeRequestCategories(listener);
     }
 
-    public void fetchDistritos(DistritosResponseListener listener) {
+    public void fetchDistritos(GetResponseListener<Distrito> listener) {
 
         makeRequestDistritos(listener);
 
     }
 
-    public void fetchContentores(String bairro, MOPAResponseListener<Contentor> listener){
+    public void fetchContentores(String bairro, GetResponseListener<Contentor> listener) {
 
         makeRequestContentores(bairro, listener);
+    }
+
+    /*
+     * Save methods
+     */
+    public void saveOcorrencia(SaveResponseListener<Ocorrencia> listener, Ocorrencia ocorrencia,
+                               Categoria categoria, Contentor contentor, Fiscal fiscal) {
+
+        makeRequestSaveOcorrencia(listener, ocorrencia, categoria, contentor, fiscal);
     }
 
     private String mopaUrlWithStartDate() {
@@ -71,16 +99,16 @@ public class ApiMOPA {
         DateTime startDate = dateTime.minusDays(7);
 
         String startDateString = startDate.toString();
-        String urlResult = MOPA_REQUESTS_JSON_URL + "?start_date=" + startDateString;
+        String urlResult = MOPA_TESTE_REQUESTS_JSON_URL + "?start_date=" + startDateString;
 
         Log.v("MOPA", startDateString);
         return urlResult;
     }
 
     /**
-     *
+     * GET WORKER METHODS
      */
-    private void makeRequestOcorrencias(final OccorrenciasResponseListener responseListener) {
+    private void makeRequestOcorrencias(final GetResponseListener<Ocorrencia> responseListener) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mopaUrlWithStartDate(),
                 new Response.Listener<String>() {
@@ -136,7 +164,7 @@ public class ApiMOPA {
                 Log.v("Ocorrencia", idMOPA + "-" + estado + "-" + categoria + "-" + descricao + "-" +
                         bairro + "-" + dataCriacao + "-" + dataUpdate);
 
-                Ocorrencia ocorrencia = new Ocorrencia(1, idMOPA, null, bairro, categoria, null, null,
+                Ocorrencia ocorrencia = new Ocorrencia(1, idMOPA, null, bairro, categoria, null,
                         dataCriacao, descricao, estado, null);
 
                 ocorrencias.add(ocorrencia);
@@ -152,9 +180,9 @@ public class ApiMOPA {
         return ocorrencias;
     }
 
-    private void makeRequestCategories(final CategoriasResponseListener listener) {
+    private void makeRequestCategories(final GetResponseListener<Categoria> listener) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, MOPA_CATEGORIES_JSON_URL + "?",
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, MOPA_TESTE_CATEGORIES_JSON_URL + "?",
                 new Response.Listener<String>() {
 
                     @Override
@@ -229,10 +257,10 @@ public class ApiMOPA {
         return categorias;
     }
 
-    private void makeRequestDistritos(final DistritosResponseListener listener) {
+    private void makeRequestDistritos(final GetResponseListener<Distrito> listener) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                MOPA_LOCATIONS_JSON_URL + "?type=district", new Response.Listener<String>() {
+                MOPA_TESTE_LOCATIONS_JSON_URL + "?type=district", new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -287,10 +315,10 @@ public class ApiMOPA {
         return distritos;
     }
 
-    private void makeRequestContentores(String bairro, final MOPAResponseListener<Contentor> listener) {
+    private void makeRequestContentores(String bairro, final GetResponseListener<Contentor> listener) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                MOPA_LOCATIONS_JSON_URL + "?type=container&neighbourhood=" + bairro,
+                MOPA_TESTE_LOCATIONS_JSON_URL + "?type=container&neighbourhood=" + urlEncode(bairro),
 
                 new Response.Listener<String>() {
 
@@ -313,7 +341,7 @@ public class ApiMOPA {
         requestQueue.add(stringRequest);
     }
 
-    private ArrayList<Contentor> extractContentores(String requestResponse){
+    private ArrayList<Contentor> extractContentores(String requestResponse) {
 
         ArrayList<Contentor> contentores = new ArrayList<>();
 
@@ -326,14 +354,107 @@ public class ApiMOPA {
 
                 String id = contentorObject.getString("location_id");
                 String name = contentorObject.getString("location_name");
+                double latitude = contentorObject.getDouble("lat");
+                double longitude = contentorObject.getDouble("long");
 
-                contentores.add(new Contentor(id,name));
+                contentores.add(new Contentor(id, name, latitude, longitude));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return contentores;
+    }
+
+    /*
+     *  POST WORKER METHODS
+     */
+
+    private void makeRequestSaveOcorrencia(final SaveResponseListener<Ocorrencia> listener, final Ocorrencia ocorrencia,
+                                           final Categoria categoria, final Contentor contentor,
+                                           final Fiscal fiscal) {
+
+        StringRequest request = new StringRequest(Request.Method.POST,
+                MOPA_TESTE_POST_URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("MOPA", response);
+                listener.onSuccess(null);
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                error.printStackTrace();
+                Log.e("MOPA", error.toString());
+                listener.onError();
+            }
+
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("service_code", categoria.getMopaId());
+                params.put("phone", fiscal.getNumeroTelefone());
+                params.put("neighbourhood", ocorrencia.getBairro());
+
+                if (categoria.requiresContentor()) {
+
+                    params.put("description", "TESTE MOPA-FISCAL " + ocorrencia.getDescricao());
+                    params.put("address_id", contentor.getLocationId());
+                    params.put("lat", contentor.getLatitude() + "");
+                    params.put("long", contentor.getLongitude() + "");
+
+
+                } else {//quarteirao
+                    params.put("description", ocorrencia.getDescricao());
+                    params.put("address_id", 0 + "");
+                    params.put("lat", ocorrencia.getDistrito().getLatitude() + "");
+                    params.put("long", ocorrencia.getDistrito().getLongitude() + "");
+                }
+
+                if (ocorrencia.getUrlImagem() != null) {
+                    params.put("media_url", ocorrencia.getUrlImagem());
+
+                }
+
+                Log.d("Params", params.toString());
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
+                params.put("Charset", "UTF-8");
+
+                return params;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    private String urlEncode(String string) {
+
+        //try {
+
+        return Uri.encode(string, "");
+            /*//String encodedString = URLEncoder.encode(string, "UTF-8");
+            return encodedString.replace("+", "%20");*/
+
+       /* } catch (UnsupportedEncodingException e) {
+
+            e.printStackTrace();
+            return string;
+        }*/
     }
 
     public static final String MOPA_ID = "service_request_id";
@@ -350,42 +471,20 @@ public class ApiMOPA {
 
     public static final String MOPA_CODIGO_SERVICO = "service_code";
 
-    //    public static final String MOPA_LOCATION_
-
     /**
-     * Mopa Response Listener interfaces
+     * Mopa Response Listener interface.
      */
-    public interface OccorrenciasResponseListener {
 
-        void onSuccess(ArrayList<Ocorrencia> ocorrencias);
-
-        void onError();
-    }
-
-    public interface CategoriasResponseListener {
-
-        void onSuccess(ArrayList<Categoria> categorias);
-
-        void onError();
-    }
-
-    public interface DistritosResponseListener {
-
-        void onSuccess(ArrayList<Distrito> distritos);
-
-        void onError();
-    }
-
-    public interface ContentoresResponseListener {
-
-        void onSuccess(ArrayList<Contentor> contentores);
-
-        void onError();
-    }
-
-    public interface MOPAResponseListener<E> {
+    public interface GetResponseListener<E> {
 
         void onSuccess(ArrayList<E> objectos);
+
+        void onError();
+    }
+
+    public interface SaveResponseListener<E> {
+
+        void onSuccess(E object);
 
         void onError();
     }

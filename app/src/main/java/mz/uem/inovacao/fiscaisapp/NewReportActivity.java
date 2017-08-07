@@ -26,6 +26,7 @@ import com.google.firebase.storage.UploadTask;
 
 import org.joda.time.DateTime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -113,7 +114,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
     private void requestDistritos() {
 
-        mopa.fetchDistritos(new ApiMOPA.DistritosResponseListener() {
+        mopa.fetchDistritos(new ApiMOPA.GetResponseListener<Distrito>() {
 
             @Override
             public void onSuccess(ArrayList<Distrito> distritos) {
@@ -135,7 +136,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
     private void requestCategories() {
 
-        mopa.fetchCategories(new ApiMOPA.CategoriasResponseListener() {
+        mopa.fetchCategories(new ApiMOPA.GetResponseListener<Categoria>() {
 
             @Override
             public void onSuccess(ArrayList<Categoria> categorias) {
@@ -158,12 +159,14 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
     private void requestContentores(String bairro) {
 
-        mopa.fetchContentores(bairro, new ApiMOPA.MOPAResponseListener<Contentor>() {
+        mopa.fetchContentores(bairro, new ApiMOPA.GetResponseListener<Contentor>() {
 
             @Override
             public void onSuccess(ArrayList<Contentor> contentores) {
 
-                ArrayAdapter<Contentor> adapter = new ArrayAdapter<Contentor>(NewReportActivity.this,
+                NewReportActivity.this.contentores = contentores;
+
+                ArrayAdapter<Contentor> adapter = new ArrayAdapter<>(NewReportActivity.this,
                         R.layout.support_simple_spinner_dropdown_item, contentores);
 
                 spinnerContentor.setAdapter(adapter);
@@ -254,16 +257,28 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         Toast.makeText(this, DateTime.now().toString(), Toast.LENGTH_SHORT).show();
         if (categoria.requiresContentor()) {
 
-            String contentor = (String) spinnerContentor.getSelectedItem();
-            ocorrencia = new Ocorrencia((int) new Date().getTime(), "CODIGO MOPA", distrito, bairro, categoria.getNome(), contentor,
-                    null, DateTime.now().toString(), descricao, estado, Cache.equipa);
+            Contentor contentor = (Contentor) spinnerContentor.getSelectedItem();
+            ocorrencia = new Ocorrencia((int) new Date().getTime(), "CODIGO MOPA", distrito, bairro, categoria.getNome(), contentor.getNome(),
+                    DateTime.now().toString(), descricao, estado, Cache.equipa);
         } else {
             String quarteirao = editTextQuarteirao.getText().toString();
-            ocorrencia = new Ocorrencia((int) new Date().getTime(), "CODIGO MOPA", distrito, bairro, categoria.getNome(), null,
-                    quarteirao, DateTime.now().toString(), descricao, estado, Cache.equipa);
+            ocorrencia = new Ocorrencia((int) new Date().getTime(), "CODIGO MOPA", distrito, bairro, categoria.getNome(), null
+                    , DateTime.now().toString(), descricao += ". Quarteirao: " + quarteirao, estado, Cache.equipa);
         }
 
+
     }
+
+    private Categoria getSelectedCategoria() {
+
+        return categorias.get(spinnerCategoria.getSelectedItemPosition());
+    }
+
+    private Contentor getSelectedContentor() {
+
+        return contentores.get(spinnerContentor.getSelectedItemPosition());
+    }
+
 
     private void saveOcorrencia() {
 
@@ -272,18 +287,41 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void success(Object object) {
 
-                hideSavingProgressDialog();
-                showSaveResultDialog(true, null);
+                Toast.makeText(NewReportActivity.this, "Salvo no nosso server. Salvando no MOPA",
+                        Toast.LENGTH_SHORT).show();
+
+                new ApiMOPA(NewReportActivity.this).saveOcorrencia(mopaResponseListener, ocorrencia,
+                        getSelectedCategoria(), getSelectedContentor(), Cache.fiscal);
             }
 
             @Override
             public void error(String error) {
 
                 hideSavingProgressDialog();
-                showSaveResultDialog(false, "Erro ao salvar ocorrencia. Tente novamente");
+                showSaveResultDialog(false, "Erro ao salvar ocorrencia no nosso servidor. Tente novamente");
             }
         });
+
+
     }
+
+    private ApiMOPA.SaveResponseListener<Ocorrencia> mopaResponseListener = new ApiMOPA.SaveResponseListener<Ocorrencia>() {
+
+        @Override
+        public void onSuccess(Ocorrencia object) {
+
+            hideSavingProgressDialog();
+            showSaveResultDialog(true, null);
+        }
+
+        @Override
+        public void onError() {
+
+            hideSavingProgressDialog();
+            showSaveResultDialog(false, "Erro ao salvar ocorrencia no MOPA. Tente novamente");
+        }
+    };
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -292,7 +330,8 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
             if (myCameraUtils.isResultInOurDirectory()) {
 
-                pictureUri = Uri.fromFile(myCameraUtils.getPictureTaken());
+                File compressedImage = myCameraUtils.compressImage(myCameraUtils.getPictureTaken());
+                pictureUri = Uri.fromFile(compressedImage);
 
             } else {
 
@@ -439,24 +478,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
             Distrito distrito = distritos.get(spinnerDistrito.getSelectedItemPosition());
             String bairro = distrito.getBairros().get(spinnerBairro.getSelectedItemPosition());
 
-            mopa.fetchContentores(bairro, new ApiMOPA.MOPAResponseListener<Contentor>() {
-
-                @Override
-                public void onSuccess(ArrayList<Contentor> contentores) {
-
-                    NewReportActivity.this.contentores = contentores;
-
-                    ArrayAdapter<Contentor> adapter = new ArrayAdapter<>(NewReportActivity.this,
-                            R.layout.support_simple_spinner_dropdown_item, contentores);
-
-                    spinnerContentor.setAdapter(adapter);
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
+            requestContentores(bairro);
 
         }
 

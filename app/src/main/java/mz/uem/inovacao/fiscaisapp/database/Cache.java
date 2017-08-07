@@ -1,5 +1,6 @@
 package mz.uem.inovacao.fiscaisapp.database;
 
+import mz.uem.inovacao.fiscaisapp.entities.Alocacao;
 import mz.uem.inovacao.fiscaisapp.entities.Equipa;
 import mz.uem.inovacao.fiscaisapp.entities.Fiscal;
 import mz.uem.inovacao.fiscaisapp.entities.Pedido;
@@ -15,6 +16,7 @@ public class Cache {
     public static Fiscal fiscal;
     public static Equipa equipa;
     public static Pedido pedidoValidacao;
+    public static Alocacao alocacao;
 
     public static void clearAll(){
 
@@ -22,5 +24,6 @@ public class Cache {
         fiscal = null;
         equipa = null;
         pedidoValidacao = null;
+        alocacao = null;
     }
 }

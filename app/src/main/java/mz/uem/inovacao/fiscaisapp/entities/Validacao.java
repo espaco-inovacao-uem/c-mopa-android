@@ -15,7 +15,7 @@ public class Validacao {
     private int id;
 
     @JsonProperty("data_de_registo")
-    private Date dataRegisto;
+    private String dataRegisto;
 
     private String descricao;
     private String estado;
@@ -33,18 +33,25 @@ public class Validacao {
     @JsonProperty("pedido_id")
     private int serverPedidoValidacao;
 
+    private Equipa equipa;
+
+    @JsonProperty("equipa_id")
+    private int serverEquipa;
+
+
     public Validacao() {
 
     }
 
-    public Validacao(Date dataRegisto, String descricao, String estado, String fotoUrl,
-                     Pedido pedidoValidacao) {
+    public Validacao(String dataRegisto, String descricao, String estado, String fotoUrl,
+                     Pedido pedidoValidacao, Equipa equipa) {
 
         this.dataRegisto = dataRegisto;
         this.descricao = descricao;
         this.estado = estado;
         this.fotoUrl = fotoUrl;
         this.pedidoValidacao = pedidoValidacao;
+        this.equipa = equipa;
     }
 
     public int getId() {
@@ -55,11 +62,11 @@ public class Validacao {
         this.id = id;
     }
 
-    public Date getDataRegisto() {
+    public String getDataRegisto() {
         return dataRegisto;
     }
 
-    public void setDataRegisto(Date dataRegisto) {
+    public void setDataRegisto(String dataRegisto) {
         this.dataRegisto = dataRegisto;
     }
 
@@ -117,5 +124,21 @@ public class Validacao {
 
     public void setServerPedidoValidacao(int serverPedidoValidacao) {
         this.serverPedidoValidacao = serverPedidoValidacao;
+    }
+
+    public Equipa getEquipa() {
+        return equipa;
+    }
+
+    public void setEquipa(Equipa equipa) {
+        this.equipa = equipa;
+    }
+
+    public int getServerEquipa() {
+        return serverEquipa;
+    }
+
+    public void setServerEquipa(int serverEquipa) {
+        this.serverEquipa = serverEquipa;
     }
 }

@@ -11,25 +11,26 @@ import java.util.ArrayList;
 
 import mz.uem.inovacao.fiscaisapp.R;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
+import mz.uem.inovacao.fiscaisapp.entities.Validacao;
 
 /**
  *
  */
 
-public class OcorrenciaHistoryListAdapter extends RecyclerView.Adapter<OcorrenciaHistoryListAdapter.ViewHolder> {
+public class ValidacaoHistoryListAdapter extends RecyclerView.Adapter<ValidacaoHistoryListAdapter.ViewHolder> {
 
-    private ArrayList<Ocorrencia> ocorrencias;
+    private ArrayList<Validacao> validacoes;
     private Context context;
 
-    public OcorrenciaHistoryListAdapter(ArrayList<Ocorrencia> ocorrencias, Context context) {
-        this.ocorrencias = ocorrencias;
+    public ValidacaoHistoryListAdapter(ArrayList<Validacao> validacoes, Context context) {
+        this.validacoes = validacoes;
         this.context = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(context).inflate(R.layout.list_item_history_ocorrencia, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.list_item_history_validacao, parent, false);
 
         return new ViewHolder(v);
     }
@@ -37,20 +38,20 @@ public class OcorrenciaHistoryListAdapter extends RecyclerView.Adapter<Ocorrenci
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        Ocorrencia ocorrencia = ocorrencias.get(position);
+        Validacao validacao = validacoes.get(position);
 
         viewHolder.ocorrenciaIndex = position;
-        viewHolder.textViewId.setText("#" + ocorrencia.getId());
-        viewHolder.textViewCategoria.setText(ocorrencia.getCategoria());
-        viewHolder.textViewData.setText(ocorrencia.getData());
-        viewHolder.textViewBairro.setText(ocorrencia.getBairro());
+        viewHolder.textViewId.setText("#" + validacao.getId());
+        /*viewHolder.textViewCategoria.setText(validacao.getCategoria());
+        viewHolder.textViewData.setText(validacao.getData());
+        viewHolder.textViewBairro.setText(validacao.getBairro());*/
 
     }
 
     @Override
     public int getItemCount() {
 
-        return ocorrencias.size();
+        return validacoes.size();
     }
 
 
@@ -66,10 +67,10 @@ public class OcorrenciaHistoryListAdapter extends RecyclerView.Adapter<Ocorrenci
         public ViewHolder(View itemView) {
             super(itemView);
 
-            textViewId = (TextView) itemView.findViewById(R.id.textViewOcorrenciaId);
-            textViewCategoria = (TextView) itemView.findViewById(R.id.textViewOcorrenciaCategoria);
+            textViewId = (TextView) itemView.findViewById(R.id.textViewValidacaoId);
+            /*textViewCategoria = (TextView) itemView.findViewById(R.id.textViewOcorrenciaCategoria);
             textViewData = (TextView) itemView.findViewById(R.id.textViewOcorrenciaDataCriacao);
-            textViewBairro = (TextView) itemView.findViewById(R.id.textViewOcorrenciaBairro);
+            textViewBairro = (TextView) itemView.findViewById(R.id.textViewOcorrenciaBairro);*/
 
             itemView.setOnClickListener(this);
         }
@@ -83,7 +84,7 @@ public class OcorrenciaHistoryListAdapter extends RecyclerView.Adapter<Ocorrenci
 
            /* Intent intent = new Intent(context, PedidoValidacaoDetailsActivity.class);
 
-            Ocorrencia ocorrencia = ocorrencias.get(ocorrenciaIndex);
+            Ocorrencia ocorrencia = validacoes.get(ocorrenciaIndex);
             Ocorrencia ocorrencia = ocorrencia.getOcorrencia();
 
             intent.putExtra(ApiMOPA.MOPA_ID, ocorrencia.getCodigoMOPA());
