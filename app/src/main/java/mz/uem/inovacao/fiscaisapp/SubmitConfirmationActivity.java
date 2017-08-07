@@ -127,6 +127,7 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
                     }
                 })
+                .cancelable(false)
                 .build().show();
 
     }

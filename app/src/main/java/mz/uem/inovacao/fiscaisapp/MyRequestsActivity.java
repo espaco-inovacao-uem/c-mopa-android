@@ -1,6 +1,7 @@
 package mz.uem.inovacao.fiscaisapp;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
@@ -24,6 +27,7 @@ import mz.uem.inovacao.fiscaisapp.entities.Equipa;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 import mz.uem.inovacao.fiscaisapp.entities.Pedido;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
+import mz.uem.inovacao.fiscaisapp.utils.AppConstants;
 
 import static mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil.mapper;
 
@@ -110,6 +114,8 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
 
 
                 } else {
+
+                    showSemAlocacaoDialog();
                     Log.d("Alocacao", "sem alocacoes");
                 }
 
@@ -155,6 +161,25 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
                 Toast.makeText(MyRequestsActivity.this, "Erro pedidos", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showSemAlocacaoDialog() {
+        new MaterialDialog.Builder(this)
+                .title("Impossível continuar")
+                .content("Sem Alocações. Contacte o Admin do sistema")
+                .positiveText("Ok")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        finish();
+                    }
+                })
+                .cancelable(false)
+                .build().show();
+
+
     }
 
     @Override
