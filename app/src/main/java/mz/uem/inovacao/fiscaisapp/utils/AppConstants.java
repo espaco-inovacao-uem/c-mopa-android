@@ -12,7 +12,7 @@ public class AppConstants {
     public static final String PWD = "mopa2017";
     public static final String SESSION_ID = "session_id";
     public static final String USER_TABLE = "user";
-    public static final String DOMAIN = "http://172.21.200.131";
+    public static final String DOMAIN = "http://192.168.0.112:8080";
     public static final String DSP_URL = DOMAIN+"/api";
     public static final String USER_NAME = "USER_NAME";
     public static final String USER_ID = "USER_ID";
@@ -22,10 +22,11 @@ public class AppConstants {
     public static final String DSP_URL_SUFIX = "/v2";
     public static final String CONTAINER_NAME = "applications";
     public static final String FOLDER_NAME = "ourmoz";
-    public static final String API_KEY = FELIX_API_KEY;
+    public static final String API_KEY = MAURO_API_KEY;
     public static final String ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD";
     public static final String ERROR_USER_NOT_FOUND = "ERROR_USER_NOT_FOUND";
     public static final String ERROR_NO_INTERNET_CONNECTION = "ERROR_NO_INTERNET_CONNECTION";
+
 
 }
 

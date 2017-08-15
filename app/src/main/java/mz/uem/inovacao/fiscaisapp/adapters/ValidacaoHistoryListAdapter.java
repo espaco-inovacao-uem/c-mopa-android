@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import mz.uem.inovacao.fiscaisapp.R;
-import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
+import mz.uem.inovacao.fiscaisapp.database.Cache;
 import mz.uem.inovacao.fiscaisapp.entities.Validacao;
 
 /**
@@ -40,11 +40,11 @@ public class ValidacaoHistoryListAdapter extends RecyclerView.Adapter<ValidacaoH
 
         Validacao validacao = validacoes.get(position);
 
-        viewHolder.ocorrenciaIndex = position;
+        viewHolder.validacaoIndex = position;
         viewHolder.textViewId.setText("#" + validacao.getId());
-        /*viewHolder.textViewCategoria.setText(validacao.getCategoria());
-        viewHolder.textViewData.setText(validacao.getData());
-        viewHolder.textViewBairro.setText(validacao.getBairro());*/
+        viewHolder.textViewEstado.setText(validacao.getEstado());
+        viewHolder.textViewData.setText(validacao.getDataRegisto());
+        //viewHolder.textViewEquipa.setText(Cache.equipa.toString());
 
     }
 
@@ -57,20 +57,20 @@ public class ValidacaoHistoryListAdapter extends RecyclerView.Adapter<ValidacaoH
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        int ocorrenciaIndex;
+        int validacaoIndex;
         TextView textViewId;
-        TextView textViewCategoria;
+        TextView textViewEstado;
         TextView textViewData;
-        TextView textViewBairro;
+        //TextView textViewBairro;
 
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             textViewId = (TextView) itemView.findViewById(R.id.textViewValidacaoId);
-            /*textViewCategoria = (TextView) itemView.findViewById(R.id.textViewOcorrenciaCategoria);
-            textViewData = (TextView) itemView.findViewById(R.id.textViewOcorrenciaDataCriacao);
-            textViewBairro = (TextView) itemView.findViewById(R.id.textViewOcorrenciaBairro);*/
+            textViewEstado = (TextView) itemView.findViewById(R.id.textViewValidacaoEstado);
+            textViewData = (TextView) itemView.findViewById(R.id.textViewValidacaoDataCriacao);
+            //textViewBairro = (TextView) itemView.findViewById(R.id.textViewOcorrenciaBairro);
 
             itemView.setOnClickListener(this);
         }

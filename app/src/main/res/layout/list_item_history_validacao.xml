@@ -13,27 +13,26 @@
         android:layout_height="wrap_content"
         android:text="#1348234"/>
 
-    <!--<TextView
-        android:id="@+id/textViewOcorrenciaCategoria"
+   <TextView
+        android:id="@+id/textViewValidacaoEstado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Contentor não recolhido"
         android:textColor="@color/black"
         android:textStyle="bold"/>
 
-    <TextView
-        android:id="@+id/textViewOcorrenciaDataCriacao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Em progresso"
-        android:textColor="@color/black"/>
+       <TextView
+           android:id="@+id/textViewValidacaoDataCriacao"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Em progresso"
+           android:textColor="@color/black"/>
 
-    <TextView
-        android:id="@+id/textViewOcorrenciaBairro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Bairro da Costa do Sol"
-        android:textColor="@color/black"/>-->
+          <TextView
+              android:id="@+id/textViewValidacaoEquipa"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Bairro da Costa do Sol"
+              android:textColor="@color/black"/>
 
     <View
         android:id="@+id/divider"
