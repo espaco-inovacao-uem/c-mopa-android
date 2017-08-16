@@ -47,10 +47,12 @@ class SignInTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
         dbApi.addHeader("X-DreamFactory-Api-Key", AppConstants.API_KEY);
         dbApi.setBasePath(AppConstants.DSP_URL + AppConstants.DSP_URL_SUFIX);
         try {
+            Log.d("Cloud","Entra no try");
             RecordsResponse records = dbApi.getRecords(AppConstants.USER_TABLE,null,"username%20%3D%20"+userName,-1,-1,null,null,false,false,null,null,true,null);
             //log(records.toString());
             return records;
         } catch (Exception e) {
+            Log.d("Cloud","Entra no catch");
             e.printStackTrace();
             errorMsg = e.getMessage();
         }

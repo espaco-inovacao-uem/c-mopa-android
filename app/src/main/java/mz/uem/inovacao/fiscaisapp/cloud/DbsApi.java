@@ -326,10 +326,12 @@ public class DbsApi {
                 //    	  return null;
             }
             else {
+                Log.d("Cloud","Entra no else return null");
                 return null;
             }
         } catch (ApiException ex) {
             if(ex.getCode() == 404) {
+                Log.d("este","super nulo ");
                 return null;
             }
             else {

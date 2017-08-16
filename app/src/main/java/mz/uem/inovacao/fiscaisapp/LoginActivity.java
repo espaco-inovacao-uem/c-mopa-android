@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             hideProgressDialog();
             showLoginErrorDialog(error);
-            Log.e("Login", error);
+            Log.e("Login erro", error);
         }
     };
 

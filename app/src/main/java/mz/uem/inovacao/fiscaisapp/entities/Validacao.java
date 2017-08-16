@@ -23,6 +23,8 @@ public class Validacao {
     @JsonProperty("foto_url")
     private String fotoUrl;
 
+    private String bairro;
+
     @JsonIgnore
     private String latitude;
     @JsonIgnore
@@ -52,6 +54,15 @@ public class Validacao {
         this.fotoUrl = fotoUrl;
         this.pedidoValidacao = pedidoValidacao;
         this.equipa = equipa;
+    }
+
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
     }
 
     public int getId() {

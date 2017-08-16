@@ -16,6 +16,8 @@ public class Pedido {
     private String descricao;
     private String estado;
 
+
+
     @JsonProperty("data_de_registo")
     private String dataRegisto;
 
@@ -41,6 +43,7 @@ public class Pedido {
         this.serverOcorrencia = serverOcorrencia;
         this.serverEquipa = serverEquipa;
     }
+
 
     public int getId() {
         return id;

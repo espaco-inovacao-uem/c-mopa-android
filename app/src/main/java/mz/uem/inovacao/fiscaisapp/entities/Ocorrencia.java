@@ -13,8 +13,14 @@ public class Ocorrencia {
 
     private int id;
 
-    @JsonProperty("codigo")
+
+    private String codigo;
+
+    @JsonProperty("request_id")
     private String codigoMOPA;
+
+    //O request id e o codigo do mopa
+
     private Distrito distrito;
     private String bairro;
     private String categoria;
@@ -63,7 +69,7 @@ public class Ocorrencia {
     public Ocorrencia(int id, String codigoMOPA, Distrito distrito, String bairro, String categoria,
                       String contentor, String data, String descricao, String estado, Equipa equipa) {
         this.id = id;
-        this.codigoMOPA = codigoMOPA;
+        this.codigo = codigoMOPA;
         this.distrito = distrito;
         this.bairro = bairro;
         this.categoria = categoria;
@@ -73,6 +79,14 @@ public class Ocorrencia {
         this.estado = estado;
         this.equipa = equipa;
         setUrlImagem("");
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public int getId() {

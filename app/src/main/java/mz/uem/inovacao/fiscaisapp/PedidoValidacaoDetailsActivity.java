@@ -72,6 +72,8 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
         ocorrencia = new Ocorrencia(1, ocorrenciaId, null, bairro, categoria, null,
                 dateString, ocorrenciaDescricao, ocorrenciaEstado, null);
 
+        Cache.pedidoValidacao.setOcorrencia(ocorrencia);
+
         populateFields();
     }
 

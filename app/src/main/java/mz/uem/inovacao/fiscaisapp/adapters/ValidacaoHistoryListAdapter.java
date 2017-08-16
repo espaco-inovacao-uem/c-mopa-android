@@ -44,6 +44,7 @@ public class ValidacaoHistoryListAdapter extends RecyclerView.Adapter<ValidacaoH
         viewHolder.textViewId.setText("#" + validacao.getId());
         viewHolder.textViewEstado.setText(validacao.getEstado());
         viewHolder.textViewData.setText(validacao.getDataRegisto());
+        viewHolder.textViewBairro.setText(validacao.getBairro());
         //viewHolder.textViewEquipa.setText(Cache.equipa.toString());
 
     }
@@ -61,7 +62,7 @@ public class ValidacaoHistoryListAdapter extends RecyclerView.Adapter<ValidacaoH
         TextView textViewId;
         TextView textViewEstado;
         TextView textViewData;
-        //TextView textViewBairro;
+        TextView textViewBairro;
 
 
         public ViewHolder(View itemView) {
@@ -70,7 +71,7 @@ public class ValidacaoHistoryListAdapter extends RecyclerView.Adapter<ValidacaoH
             textViewId = (TextView) itemView.findViewById(R.id.textViewValidacaoId);
             textViewEstado = (TextView) itemView.findViewById(R.id.textViewValidacaoEstado);
             textViewData = (TextView) itemView.findViewById(R.id.textViewValidacaoDataCriacao);
-            //textViewBairro = (TextView) itemView.findViewById(R.id.textViewOcorrenciaBairro);
+            textViewBairro = (TextView) itemView.findViewById(R.id.textViewValidacaoBairro);
 
             itemView.setOnClickListener(this);
         }

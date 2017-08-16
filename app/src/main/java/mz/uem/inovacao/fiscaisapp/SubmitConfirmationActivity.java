@@ -186,6 +186,10 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
         validacao = new Validacao(data.toString(), descricao, estado, null, Cache.pedidoValidacao, Cache.equipa);
 
+        // ***************** Alterecao Felix ***************************************
+        //Adiciona o Bairro na validacao para ser mais simples mostrar na lista
+        validacao.setBairro(Cache.pedidoValidacao.getOcorrencia().getBairro());
+
     }
 
     private void saveValidacao() {
