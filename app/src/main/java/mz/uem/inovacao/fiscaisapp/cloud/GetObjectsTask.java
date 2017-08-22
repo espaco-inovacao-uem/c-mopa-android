@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mz.uem.inovacao.fiscaisapp.dreamfactory.model.RecordsResponse;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
 import mz.uem.inovacao.fiscaisapp.utils.AppConstants;
-import mz.uem.inovacao.fiscaisapp.utils.QueryBuilder;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
         dbApi.addHeader("X-DreamFactory-Api-Key", AppConstants.API_KEY);
         dbApi.setBasePath(AppConstants.DSP_URL + AppConstants.DSP_URL_SUFIX);
         try {
-            RecordsResponse records = dbApi.getRecords(objectClassName.toLowerCase(),null,filterBuilder.getFilterString()
+            RecordsResponse records = dbApi.getRecords(objectClassName.toLowerCase(),null,filterBuilder.build()
                     ,-1,-1,null,null,false,false,null,null,true,"*");
             //log(records.toString());
             return records;

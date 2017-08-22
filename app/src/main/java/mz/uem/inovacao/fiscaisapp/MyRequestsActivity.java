@@ -26,6 +26,7 @@ import mz.uem.inovacao.fiscaisapp.entities.Distrito;
 import mz.uem.inovacao.fiscaisapp.entities.Equipa;
 import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 import mz.uem.inovacao.fiscaisapp.entities.Pedido;
+import mz.uem.inovacao.fiscaisapp.listeners.CloudResponseListener;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
 import mz.uem.inovacao.fiscaisapp.utils.AppConstants;
 
@@ -45,7 +46,8 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
         recyclerViewResults.setLayoutManager(new LinearLayoutManager(MyRequestsActivity.this,
                 LinearLayoutManager.VERTICAL, false));
 
-        fetchAlocacao();
+        fetchMeusPedidos();
+        //fetchAlocacao();
         //fetchMyRequests();
     }
 
@@ -55,36 +57,43 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private void fetchMyRequests() {
+    private void fetchMeusPedidos() {
 
-        Cloud.getPedidosValidacao(Cache.equipa, new GetObjectsListener() {
+        //1. Buscar todas alocacoes
+        Cloud.getAlocacoesHoje(Cache.equipa, new CloudResponseListener<Alocacao>() {
 
             @Override
-            public void success(List<?> lista) {
+            public void success(ArrayList<Alocacao> lista) {
 
-                ArrayList<Pedido> pedidos = new ArrayList<>();
-
-                for (int i = 0; i < lista.size(); i++) {
-
-                    Pedido pedido = (Pedido) lista.get(i);
-
-                    Ocorrencia ocorrencia = JsonUtil.mapper.convertValue(pedido.getServerOcorrencia(),
-                            new TypeReference<Ocorrencia>() {
-                            });
-
-                    pedido.setOcorrencia(ocorrencia);
-                    pedidos.add(pedido);
-                }
-
-                recyclerViewResults.setAdapter(new PedidosValidacaoListAdapter(pedidos, MyRequestsActivity.this));
-
-                Log.d("Pedidos", "recebi nr pedidos= " + pedidos.size());
-
+                fetchPedidos(lista);
             }
 
             @Override
             public void error(String error) {
 
+            }
+        });
+    }
+
+    private void fetchPedidos(List<Alocacao> alocacoes) {
+
+        ArrayList<Distrito> distritos = new ArrayList<Distrito>();
+        for (Alocacao alocacao : alocacoes) {
+
+            distritos.add(alocacao.getDistrito());
+        }
+
+        Cloud.getPedidosValidacao(distritos, new CloudResponseListener<Pedido>() {
+
+            @Override
+            public void success(ArrayList<Pedido> pedidos) {
+
+                recyclerViewResults.setAdapter(new PedidosValidacaoListAdapter(pedidos, MyRequestsActivity.this));
+            }
+
+            @Override
+            public void error(String error) {
+                Toast.makeText(MyRequestsActivity.this, "Erro pedidos", Toast.LENGTH_SHORT).show();
 
             }
         });

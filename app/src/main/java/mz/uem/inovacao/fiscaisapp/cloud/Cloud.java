@@ -1,6 +1,7 @@
 package mz.uem.inovacao.fiscaisapp.cloud;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -10,6 +11,12 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import mz.uem.inovacao.fiscaisapp.database.Cache;
+import mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil;
 import mz.uem.inovacao.fiscaisapp.entities.Alocacao;
 import mz.uem.inovacao.fiscaisapp.entities.Distrito;
 import mz.uem.inovacao.fiscaisapp.entities.Equipa;
@@ -18,6 +25,7 @@ import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 import mz.uem.inovacao.fiscaisapp.entities.Pedido;
 import mz.uem.inovacao.fiscaisapp.entities.User;
 import mz.uem.inovacao.fiscaisapp.entities.Validacao;
+import mz.uem.inovacao.fiscaisapp.listeners.CloudResponseListener;
 import mz.uem.inovacao.fiscaisapp.listeners.GetFileListener;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
 import mz.uem.inovacao.fiscaisapp.listeners.InitializeAppListener;
@@ -29,10 +37,12 @@ import mz.uem.inovacao.fiscaisapp.listeners.UpdateObjectListener;
 import mz.uem.inovacao.fiscaisapp.utils.BCrypt;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static mz.uem.inovacao.fiscaisapp.database.Cache.equipa;
+import static mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil.mapper;
 
 public class Cloud {
 
@@ -165,29 +175,72 @@ public class Cloud {
 
     }
 
-    public static void getPedidosValidacao(Equipa equipa, GetObjectsListener listener) {
+    public static void getPedidosValidacao(ArrayList<Distrito> distritos, final CloudResponseListener<Pedido> listener) {
 
-        Cloud.getObjects("Pedido", new FilterBuilder("equipa_id", equipa.getId() + "")
-                        .and().equalTo("validado", "false"),
-                new TypeReference<List<Pedido>>() {
-                }, listener);
+        ArrayList<String> idsDistritos = new ArrayList<>();
+
+        for (Distrito distrito : distritos) {
+            idsDistritos.add(distrito.getId() + "");
+        }
+
+        FilterBuilder filter = new FilterBuilder()
+                .equalTo("validado", "false")
+                .and()
+                .open()
+                .equalToOr("distrito_id", idsDistritos)
+                .close();
+
+        getObjects("Pedido", filter, new TypeReference<List<Pedido>>() {}, new GetObjectsListener() {
+
+            @Override
+            public void success(List<?> lista) {
+
+                ArrayList<Pedido> pedidos = extractPedidosValidacao(lista);
+                listener.success(pedidos);
+            }
+
+            @Override
+            public void error(String error) {
+
+                listener.error(error);
+            }
+        });
+    }
+
+    private static ArrayList<Pedido> extractPedidosValidacao(List<?> lista) {
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+
+        for (int i = 0; i < lista.size(); i++) {
+
+            Pedido pedido = (Pedido) lista.get(i);
+
+            Ocorrencia ocorrencia = JsonUtil.mapper.convertValue(pedido.getServerOcorrencia(),
+                    new TypeReference<Ocorrencia>() {
+                    });
+
+            pedido.setOcorrencia(ocorrencia);
+            pedidos.add(pedido);
+        }
+
+        return pedidos;
     }
 
     public static void getPedidosValidacao(Distrito distrito, GetObjectsListener listener) {
 
-        Cloud.getObjects("Pedido", new FilterBuilder("distrito_id", distrito.getId() + "")
+        getObjects("Pedido", new FilterBuilder("distrito_id", distrito.getId() + "")
                         .and().equalTo("validado", "false"),
                 new TypeReference<List<Pedido>>() {
                 }, listener);
     }
 
-    public static void updatePedidoValidacao(Pedido pedido, UpdateObjectListener listener){
+    public static void updatePedidoValidacao(Pedido pedido, UpdateObjectListener listener) {
         updateObject(pedido, pedido.getId(), listener);
 
     }
+
     public static void getEquipaOcorrencias(Equipa equipa, GetObjectsListener listener) {
 
-        Cloud.getObjects("Ocorrencia", new FilterBuilder("equipa_id", equipa.getId() + ""),
+        getObjects("Ocorrencia", new FilterBuilder("equipa_id", equipa.getId() + ""),
                 new TypeReference<List<Ocorrencia>>() {
                 }, listener);
 
@@ -195,7 +248,7 @@ public class Cloud {
 
     public static void getEquipaValidacoes(Equipa equipa, GetObjectsListener listener) {
 
-        Cloud.getObjects("Validacao", new FilterBuilder("equipa_id", equipa.getId() + ""),
+        getObjects("Validacao", new FilterBuilder("equipa_id", equipa.getId() + ""),
                 new TypeReference<List<Validacao>>() {
                 }, listener);
 
@@ -203,12 +256,66 @@ public class Cloud {
 
     public static void getAlocacao(Equipa equipa, GetObjectsListener listener) {
 
-        Cloud.getObjects("Alocacao", new FilterBuilder("equipa_id", equipa.getId() + ""),
+        getObjects("Alocacao", new FilterBuilder("equipa_id", equipa.getId() + ""),
                 new TypeReference<List<Alocacao>>() {
                 }, listener);
 
 
     }
+
+    public static void getAlocacoesHoje(Equipa equipa, final CloudResponseListener<Alocacao> listener) {
+
+        DateTime now = DateTime.now();
+
+        String today = now.toString("yyyy-MM-dd");
+        String tomorrow = now.plusDays(1).toString("yyyy-MM-dd");
+
+        Log.d("Alocacao", "procurando entre: " + today + " e " + tomorrow);
+
+        FilterBuilder filter =
+                new FilterBuilder()
+                        .equalTo("equipa_id", equipa.getId() + "")
+                        .and().biggerOrEquals("data_de_alocacao", today)
+                        .and().smallerOrEquals("data_de_alocacao", tomorrow);
+
+        getObjects("Alocacao", filter, new TypeReference<List<Alocacao>>() {
+
+        }, new GetObjectsListener() {
+
+            @Override
+            public void success(List<?> lista) {
+
+                ArrayList<Alocacao> alocacoes = extractAlocacoes(lista);
+                listener.success(alocacoes);
+            }
+
+            @Override
+            public void error(String error) {
+                listener.error(error);
+            }
+        });
+    }
+
+    private static ArrayList<Alocacao> extractAlocacoes(List<?> lista) {
+
+        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+
+        for (int i = 0; i < lista.size(); i++) {
+
+            Alocacao alocacao = (Alocacao) lista.get(i);
+            alocacoes.add(alocacao);
+
+            Object serverDistrito = alocacao.getServerDistrito();
+            Distrito distrito = mapper.convertValue(serverDistrito, new TypeReference<Distrito>() {
+            });
+
+            alocacao.setDistrito(distrito);
+            Log.d("Alocacao", distrito.getNome());
+        }
+
+        return alocacoes;
+    }
+
 }
 
 
