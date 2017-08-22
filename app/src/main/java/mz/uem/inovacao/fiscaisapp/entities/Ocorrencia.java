@@ -50,6 +50,10 @@ public class Ocorrencia {
 
     }
 
+    public Ocorrencia(String codigoMOPA) {
+        this.codigoMOPA = codigoMOPA;
+    }
+
     public Ocorrencia(Distrito distrito, String bairro, String categoria, String contentor,
                       String data, String descricao, String estado, Equipa equipa) {
 
@@ -128,14 +132,6 @@ public class Ocorrencia {
     public void setContentor(String contentor) {
         this.contentor = contentor;
     }
-
-    /*public String getQuarteirao() {
-        return quarteirao;
-    }
-
-    public void setQuarteirao(String quarteirao) {
-        this.quarteirao = quarteirao;
-    }*/
 
     public Distrito getDistrito() {
         return distrito;

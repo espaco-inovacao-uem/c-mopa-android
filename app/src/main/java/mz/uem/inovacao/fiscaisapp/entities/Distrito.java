@@ -38,6 +38,14 @@ public class Distrito {
         this.bairros = bairros;
     }
 
+    public Distrito(int id, String nome, double latitude, double longitude, ArrayList<String> bairros) {
+        this.id = id;
+        this.nome = nome;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.bairros = bairros;
+    }
+
     public int getId() {
         return id;
     }

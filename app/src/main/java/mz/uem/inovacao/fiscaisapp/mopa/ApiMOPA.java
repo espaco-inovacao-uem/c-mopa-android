@@ -45,12 +45,13 @@ public class ApiMOPA {
     private static final String MOPA_TESTE_REQUESTS_JSON_URL = "http://dev.opengov.cc/georeport/v2/requests.json";
     private static final String MOPA_TESTE_LOCATIONS_JSON_URL = "http://dev.opengov.cc/georeport/v2/locations.json";
     private static final String MOPA_TESTE_CATEGORIES_JSON_URL = "http://dev.opengov.cc/georeport/v2/services.json";
-    private static final String MOPA_TESTE_POST_URL = "http://dev.opengov.cc/georeport/v2/requests.xml";
+    private static final String MOPA_TESTE_POST_URL = "http://dev.opengov.cc/georeport/v2/requests.json";
+    private static final String MOPA_TESTE_PUT_VALIDACAO_URL = "http://dev.opengov.cc/georeport/v2/requests/";
 
     private static final String MOPA_REQUESTS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/requests.json";
     private static final String MOPA_LOCATIONS_JSON_URL = "http://www.mopa.co.mz/georeport/v2/locations.json";
     private static final String MOPA_CATEGORIES_JSON_URL = "http://www.mopa.co.mz/georeport/v2/services.json";
-    private static final String MOPA_POST_URL = "http://www.mopa.co.mz/georeport/v2/requests.xml";
+    private static final String MOPA_POST_URL = "http://www.mopa.co.mz/georeport/v2/requests.json";
 
 
     private RequestQueue requestQueue;
@@ -87,8 +88,8 @@ public class ApiMOPA {
     /*
      * Save methods
      */
-    public void saveOcorrencia(SaveResponseListener<Ocorrencia> listener, Ocorrencia ocorrencia,
-                               Categoria categoria, Contentor contentor, Fiscal fiscal) {
+    public void saveOcorrencia(Ocorrencia ocorrencia, Categoria categoria, Contentor contentor,
+                               Fiscal fiscal, SaveResponseListener<Ocorrencia> listener) {
 
         makeRequestSaveOcorrencia(listener, ocorrencia, categoria, contentor, fiscal);
     }
@@ -297,6 +298,8 @@ public class ApiMOPA {
 
                 String id = distritoObject.getString("location_id");
                 String name = distritoObject.getString("location_name");
+                double latitude = distritoObject.getDouble("lat");
+                double longitude = distritoObject.getDouble("long");
                 JSONArray arrayBairros = distritoObject.getJSONArray("neighbourhood");
 
                 ArrayList<String> bairros = new ArrayList<>();
@@ -306,7 +309,7 @@ public class ApiMOPA {
                     bairros.add(arrayBairros.getString(j));
                 }
 
-                distritos.add(new Distrito(Integer.valueOf(id), name, bairros));
+                distritos.add(new Distrito(Integer.valueOf(id), name, latitude,longitude, bairros));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -380,9 +383,11 @@ public class ApiMOPA {
             @Override
             public void onResponse(String response) {
 
-                Log.d("Teste Mopa", response);
-                Log.d("Teste Mopa 2", "Teste Mopa 2");
-                listener.onSuccess(null);
+                Log.d("Mopa Codigo", response);
+
+                String codigoMopa = extractCodigoMopa(response);
+
+                listener.onSuccess(new Ocorrencia(codigoMopa));
             }
 
         }, new Response.ErrorListener() {
@@ -407,11 +412,10 @@ public class ApiMOPA {
 
                 if (categoria.requiresContentor()) {
 
-                    params.put("description", "TESTE MOPA-FISCAL " + ocorrencia.getDescricao());
+                    params.put("description", ocorrencia.getDescricao());
                     params.put("address_id", contentor.getLocationId());
                     params.put("lat", contentor.getLatitude() + "");
                     params.put("long", contentor.getLongitude() + "");
-
 
                 } else {//quarteirao
                     params.put("description", ocorrencia.getDescricao());
@@ -443,19 +447,27 @@ public class ApiMOPA {
         requestQueue.add(request);
     }
 
+    private String extractCodigoMopa(String postResponse) {
+
+        try {
+            JSONArray arrayResponse = new JSONArray(postResponse);
+
+
+            JSONObject responseObject = arrayResponse.getJSONObject(0);
+
+            return responseObject.getString("service_request_id");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return postResponse;
+    }
+
     private String urlEncode(String string) {
 
-        //try {
-
         return Uri.encode(string, "");
-            /*//String encodedString = URLEncoder.encode(string, "UTF-8");
-            return encodedString.replace("+", "%20");*/
 
-       /* } catch (UnsupportedEncodingException e) {
-
-            e.printStackTrace();
-            return string;
-        }*/
     }
 
     public static final String MOPA_ID = "service_request_id";

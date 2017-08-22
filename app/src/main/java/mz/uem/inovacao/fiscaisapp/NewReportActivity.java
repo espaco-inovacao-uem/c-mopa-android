@@ -259,12 +259,12 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
         if (categoria.requiresContentor()) {
 
             Contentor contentor = (Contentor) spinnerContentor.getSelectedItem();
-            ocorrencia = new Ocorrencia((int) new Date().getTime(), "CODIGO MOPA", distrito, bairro, categoria.getNome(), contentor.getNome(),
+            ocorrencia = new Ocorrencia(distrito, bairro, categoria.getNome(), contentor.getNome(),
                     DateTime.now().toString(), descricao, estado, Cache.equipa);
         } else {
             String quarteirao = editTextQuarteirao.getText().toString();
-            ocorrencia = new Ocorrencia((int) new Date().getTime(), "CODIGO MOPA", distrito, bairro, categoria.getNome(), null
-                    , DateTime.now().toString(), descricao += ". Quarteirao: " + quarteirao, estado, Cache.equipa);
+            ocorrencia = new Ocorrencia(distrito, bairro, categoria.getNome(), null
+                    , DateTime.now().toString(), descricao + ". Quarteirao: " + quarteirao, estado, Cache.equipa);
         }
 
 
@@ -283,44 +283,42 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
 
     private void saveOcorrencia() {
 
-        Cloud.saveOcorrencia(ocorrencia, new SaveObjectListener() {
+        new ApiMOPA(NewReportActivity.this).saveOcorrencia(ocorrencia,
+                getSelectedCategoria(), getSelectedContentor(), Cache.fiscal, new ApiMOPA.SaveResponseListener<Ocorrencia>() {
 
-            @Override
-            public void success(Object object) {
+                    @Override
+                    public void onSuccess(Ocorrencia mopaOcorrencia) {
 
-                Toast.makeText(NewReportActivity.this, "Salvo no nosso server. Salvando no MOPA",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NewReportActivity.this, "Salvo no MOPA. Salvando no nosso server",
+                                Toast.LENGTH_SHORT).show();
 
-                new ApiMOPA(NewReportActivity.this).saveOcorrencia(mopaResponseListener, ocorrencia,
-                        getSelectedCategoria(), getSelectedContentor(), Cache.fiscal);
-            }
+                        ocorrencia.setCodigo(mopaOcorrencia.getCodigoMOPA());
+                        Cloud.saveOcorrencia(ocorrencia, cloudResponseListener);
 
-            @Override
-            public void error(String error) {
+                        Log.d("MOPA", "codigo= " + ocorrencia.getCodigoMOPA());
+                    }
 
-                hideSavingProgressDialog();
-                showSaveResultDialog(false, "Erro ao salvar ocorrencia no nosso servidor. Tente novamente");
-            }
-        });
-
+                    @Override
+                    public void onError() {
+                        hideSavingProgressDialog();
+                        showSaveResultDialog(false, "Erro ao salvar ocorrencia no Mopa. Tente novamente");
+                    }
+                });
 
     }
 
-    private ApiMOPA.SaveResponseListener<Ocorrencia> mopaResponseListener = new ApiMOPA.SaveResponseListener<Ocorrencia>() {
+    private SaveObjectListener cloudResponseListener = new SaveObjectListener() {
 
         @Override
-        public void onSuccess(Ocorrencia object) {
-
-            //Log.i("Mopa Ocorrencia","codigo "+object.getCodigo());
+        public void success(Object object) {
             hideSavingProgressDialog();
             showSaveResultDialog(true, null);
         }
 
         @Override
-        public void onError() {
-
+        public void error(String error) {
             hideSavingProgressDialog();
-            showSaveResultDialog(false, "Erro ao salvar ocorrencia no MOPA. Tente novamente");
+            showSaveResultDialog(false, "Erro ao salvar ocorrencia no nosso server. Tente novamente");
         }
     };
 
@@ -421,6 +419,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
                 }
 
             }, new OnFailureListener() {
+
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
@@ -432,6 +431,7 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
                 }
 
             }, new OnProgressListener<UploadTask.TaskSnapshot>() {
+
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
