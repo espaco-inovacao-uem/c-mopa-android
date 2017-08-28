@@ -62,7 +62,7 @@ public class ApiMOPA {
     }
 
     /*
-     * PUBLIC OUTSIDE METHODS
+     * PUBLIC GET methods
      */
     public void fetchOcorrencias(GetResponseListener<Ocorrencia> listener) {
 
@@ -86,12 +86,17 @@ public class ApiMOPA {
     }
 
     /*
-     * Save methods
+     * PUBLIC SAVE methods
      */
     public void saveOcorrencia(Ocorrencia ocorrencia, Categoria categoria, Contentor contentor,
                                Fiscal fiscal, SaveResponseListener<Ocorrencia> listener) {
 
         makeRequestSaveOcorrencia(listener, ocorrencia, categoria, contentor, fiscal);
+    }
+
+    public void saveValidacao(SaveResponseListener<Ocorrencia> listener, Ocorrencia ocorrencia, String estado) {
+
+        makeRequestValidateOcorrencia(listener, ocorrencia, estado);
     }
 
     private String mopaUrlWithStartDate() {
@@ -309,7 +314,7 @@ public class ApiMOPA {
                     bairros.add(arrayBairros.getString(j));
                 }
 
-                distritos.add(new Distrito(Integer.valueOf(id), name, latitude,longitude, bairros));
+                distritos.add(new Distrito(Integer.valueOf(id), name, latitude, longitude, bairros));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -370,7 +375,7 @@ public class ApiMOPA {
     }
 
     /*
-     *  POST WORKER METHODS
+     *  POST/PUT WORKER METHODS
      */
 
     private void makeRequestSaveOcorrencia(final SaveResponseListener<Ocorrencia> listener, final Ocorrencia ocorrencia,
@@ -462,6 +467,68 @@ public class ApiMOPA {
         }
 
         return postResponse;
+    }
+
+    private void makeRequestValidateOcorrencia(final SaveResponseListener<Ocorrencia> listener, final Ocorrencia ocorrencia,
+                                               final String estado) {
+
+        if (!estado.equals("Em processo") && !estado.equals("Resolvido") && !estado.equals("Inválido")) {
+            throw new IllegalArgumentException("Estado tem de ser: Em processo, Resolvido ou Inválido");
+
+        } else {
+
+            String putUrl = MOPA_TESTE_PUT_VALIDACAO_URL + ocorrencia.getCodigo() + ".json";
+            Log.d("MOPA", "Put url: " + putUrl);
+
+            StringRequest request = new StringRequest(Request.Method.PUT, putUrl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+
+                    extractValidacao(response);
+                    listener.onSuccess(new Ocorrencia());
+                }
+
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    error.printStackTrace();
+                    Log.e("MOPA", error.toString());
+                    listener.onError();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    Map<String, String> params = new HashMap<>();
+
+                    params.put("validated", "True");//TODO: Ver quando deve ser False
+                    params.put("status", estado);
+
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Content-Type", "application/x-www-form-urlencoded");
+                    params.put("Charset", "UTF-8");
+
+                    return params;
+                }
+            };
+
+            requestQueue.add(request);
+        }
+    }
+
+    private void extractValidacao(String putResponse) {
+        //TODO: Extrair validacao para verificar o que mudou
+
+        Log.d("Validacao", "Mopa response: " + putResponse);
     }
 
     private String urlEncode(String string) {

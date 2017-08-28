@@ -292,10 +292,10 @@ public class NewReportActivity extends AppCompatActivity implements View.OnClick
                         Toast.makeText(NewReportActivity.this, "Salvo no MOPA. Salvando no nosso server",
                                 Toast.LENGTH_SHORT).show();
 
-                        ocorrencia.setCodigo(mopaOcorrencia.getCodigoMOPA());
+                        ocorrencia.setCodigo(mopaOcorrencia.getCodigo());
                         Cloud.saveOcorrencia(ocorrencia, cloudResponseListener);
 
-                        Log.d("MOPA", "codigo= " + ocorrencia.getCodigoMOPA());
+                        Log.d("MOPA", "codigo= " + ocorrencia.getCodigo());
                     }
 
                     @Override

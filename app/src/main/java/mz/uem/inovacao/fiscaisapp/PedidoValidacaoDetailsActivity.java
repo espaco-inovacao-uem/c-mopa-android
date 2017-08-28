@@ -101,7 +101,7 @@ public class PedidoValidacaoDetailsActivity extends AppCompatActivity implements
     public void onClick(View view) {
 
         Intent intent = new Intent(PedidoValidacaoDetailsActivity.this,
-                SubmitConfirmationActivity.class);
+                SubmitValidacaoActivity.class);
         startActivityForResult(intent, 0);
 
     }

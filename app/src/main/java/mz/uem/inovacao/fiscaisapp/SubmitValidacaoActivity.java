@@ -27,12 +27,14 @@ import java.util.Date;
 
 import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
 import mz.uem.inovacao.fiscaisapp.database.Cache;
+import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 import mz.uem.inovacao.fiscaisapp.entities.Validacao;
 import mz.uem.inovacao.fiscaisapp.listeners.SaveObjectListener;
 import mz.uem.inovacao.fiscaisapp.listeners.UpdateObjectListener;
+import mz.uem.inovacao.fiscaisapp.mopa.ApiMOPA;
 import mz.uem.inovacao.fiscaisapp.utils.MyCameraUtils;
 
-public class SubmitConfirmationActivity extends AppCompatActivity implements View.OnClickListener {
+public class SubmitValidacaoActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewGroup formPicture;
 
@@ -51,7 +53,7 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_submit_confirmation);
+        setContentView(R.layout.activity_submit_validacao);
 
         formPicture = (ViewGroup) findViewById(R.id.formPicture);
         formPicture.setOnClickListener(this);
@@ -144,11 +146,11 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
                     final String downloadUrl = taskSnapshot.getDownloadUrl().toString();
 
-                    Toast.makeText(SubmitConfirmationActivity.this, "Upload com sucesso: " + downloadUrl,
+                    Toast.makeText(SubmitValidacaoActivity.this, "Upload com sucesso: " + downloadUrl,
                             Toast.LENGTH_SHORT).show();
 
                     validacao.setFotoUrl(downloadUrl);
-                    saveValidacao();
+                    saveValidacaoMopa(Cache.pedidoValidacao.getOcorrencia(), validacao.getEstado());
 
                 }
 
@@ -156,11 +158,12 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-                    Toast.makeText(SubmitConfirmationActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SubmitValidacaoActivity.this, "Failure", Toast.LENGTH_SHORT).show();
 
                     hideSavingProgressDialog();
                     showSaveResultDialog(false, "Erro ao carregar imagem. Tente novamente");
                     e.printStackTrace();
+
                 }
 
             }, new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -173,8 +176,9 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
         } else {//user didn't choose or create picture, so save without it
 
-            Toast.makeText(SubmitConfirmationActivity.this, "Sem imagem... Saltando", Toast.LENGTH_SHORT).show();
-            saveValidacao();
+            Toast.makeText(SubmitValidacaoActivity.this, "Sem imagem... Saltando", Toast.LENGTH_SHORT).show();
+            saveValidacaoMopa(Cache.pedidoValidacao.getOcorrencia(), validacao.getEstado());
+
         }
     }
 
@@ -192,7 +196,7 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
     }
 
-    private void saveValidacao() {
+    private void saveValidacaoNossoServer() {
 
         Cloud.saveValidacao(validacao, new SaveObjectListener() {
 
@@ -204,7 +208,7 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
                     @Override
                     public void success(long id) {
 
-                        Toast.makeText(SubmitConfirmationActivity.this, "Updated:" + id, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SubmitValidacaoActivity.this, "Updated:" + id, Toast.LENGTH_SHORT).show();
                         hideSavingProgressDialog();
                         showSaveResultDialog(true, null);
                     }
@@ -212,7 +216,8 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
                     @Override
                     public void error(String error) {
                         Log.e("Pedido", error);
-                        Toast.makeText(SubmitConfirmationActivity.this, "Erro ao actualizar pedido", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SubmitValidacaoActivity.this, "Erro ao actualizar pedido", Toast.LENGTH_SHORT).show();
+
                     }
                 });
 
@@ -221,12 +226,38 @@ public class SubmitConfirmationActivity extends AppCompatActivity implements Vie
 
             @Override
             public void error(String error) {
+                Log.v("Validacao", "Erro ao salvar no nosso Servidor");
 
                 hideSavingProgressDialog();
                 showSaveResultDialog(false, "Erro ao salvar validaçao. Tente novamente");
+
+
             }
         });
 
+    }
+
+    /**
+     * 1o
+     */
+    private void saveValidacaoMopa(Ocorrencia ocorrencia, String estado) {
+        new ApiMOPA(this).saveValidacao(new ApiMOPA.SaveResponseListener<Ocorrencia>() {
+
+            @Override
+            public void onSuccess(Ocorrencia object) {
+
+                saveValidacaoNossoServer();
+            }
+
+            @Override
+            public void onError() {
+
+                hideSavingProgressDialog();
+                showSaveResultDialog(false, "Erro ao salvar validaçao. Tente novamente");
+                Log.v("Validacao", "Erro ao salvar no MOPA");
+
+            }
+        }, ocorrencia, estado);
     }
 
     @Override

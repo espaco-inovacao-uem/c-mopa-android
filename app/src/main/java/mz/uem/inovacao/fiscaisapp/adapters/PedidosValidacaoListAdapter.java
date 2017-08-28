@@ -91,7 +91,7 @@ public class PedidosValidacaoListAdapter extends RecyclerView.Adapter<PedidosVal
             Pedido pedido = pedidos.get(ocorrenciaIndex);
             Ocorrencia ocorrencia = pedido.getOcorrencia();
 
-            intent.putExtra(ApiMOPA.MOPA_ID, ocorrencia.getCodigoMOPA());
+            intent.putExtra(ApiMOPA.MOPA_ID, ocorrencia.getCodigo());
             intent.putExtra(ApiMOPA.MOPA_ESTADO, ocorrencia.getEstado());
             intent.putExtra(ApiMOPA.MOPA_CATEGORIA, ocorrencia.getCategoria());
             intent.putExtra(ApiMOPA.MOPA_DESCRICAO, ocorrencia.getDescricao());

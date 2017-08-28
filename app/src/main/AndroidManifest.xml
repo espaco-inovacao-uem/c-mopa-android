@@ -57,7 +57,7 @@
         </activity>
 
         <activity
-            android:name=".SubmitConfirmationActivity"
+            android:name=".SubmitValidacaoActivity"
             android:label="@string/title_activity_submit_confirmation"
             android:parentActivityName=".PedidoValidacaoDetailsActivity">
             <meta-data
