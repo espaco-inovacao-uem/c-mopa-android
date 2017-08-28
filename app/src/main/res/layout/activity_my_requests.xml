@@ -11,6 +11,6 @@
         android:id="@+id/recyclerViewResults"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_empty="@layout/emptyview"/>
+        app:layout_empty="@layout/empty_view_pedidos_validacao"/>
 
 </FrameLayout>

@@ -9,6 +9,6 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_empty="@layout/empty_view_history_ocorrencias"/>
+        app:layout_empty="@layout/empty_view_history_validacao"/>
 
 </RelativeLayout>

@@ -97,6 +97,7 @@ public class HistoryActivity extends AppCompatActivity {
                 @Override
                 public void error(String error) {
 
+                    Toast.makeText(getActivity(), "Erro ao buscar ocorrencias do histórico", Toast.LENGTH_SHORT).show();
                     Log.e("History", error);
                 }
             });
@@ -115,7 +116,7 @@ public class HistoryActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_history_ocorrencias, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_history_validacoes, container, false);
 
             recyclerView = (SuperRecyclerView) rootView.findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),

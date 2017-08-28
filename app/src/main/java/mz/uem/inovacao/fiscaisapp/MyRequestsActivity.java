@@ -35,7 +35,6 @@ import static mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil.mapper;
 public class MyRequestsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SuperRecyclerView recyclerViewResults;
-    private Alocacao alocacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +46,6 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
                 LinearLayoutManager.VERTICAL, false));
 
         fetchMeusPedidos();
-        //fetchAlocacao();
-        //fetchMyRequests();
     }
 
     @Override
@@ -65,12 +62,21 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void success(ArrayList<Alocacao> lista) {
 
-                fetchPedidos(lista);
+                if (lista.size() > 0) {
+
+                    fetchPedidos(lista);
+
+                } else {
+                    showSemAlocacaoDialog();
+                }
             }
 
             @Override
             public void error(String error) {
 
+                Toast.makeText(MyRequestsActivity.this, "Erro ao buscar alocacoes de hoje",
+                        Toast.LENGTH_SHORT).show();
+                Log.e("Alocacao", "erro ao buscar alocacoes");
             }
         });
     }
@@ -93,84 +99,14 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void error(String error) {
+
                 Toast.makeText(MyRequestsActivity.this, "Erro pedidos", Toast.LENGTH_SHORT).show();
+                Log.e("Alocacao", "Erro ao buscar pedidos associados as alocacoes");
 
             }
         });
     }
 
-    private void fetchAlocacao() {
-
-        Cloud.getAlocacao(Cache.equipa, new GetObjectsListener() {
-
-            @Override
-            public void success(List<?> lista) {
-
-                if (lista.size() > 0) {
-                    alocacao = (Alocacao) lista.get(0);
-
-                    Log.d("Alocacao", alocacao.toString());
-
-                    Object serverDistrito = alocacao.getServerDistrito();
-                    Distrito distrito = mapper.convertValue(serverDistrito, new TypeReference<Distrito>() {
-                    });
-
-                    Log.d("Alocacao", distrito.getNome());
-
-                    alocacao.setDistrito(distrito);
-                    Cache.alocacao = alocacao;
-                    fetchPedidos(distrito);
-
-
-                } else {
-
-                    showSemAlocacaoDialog();
-                    Log.d("Alocacao", "sem alocacoes");
-                }
-
-            }
-
-            @Override
-            public void error(String error) {
-
-                Log.d("Alocacao", "erro ao buscar alocacoes");
-
-            }
-        });
-    }
-
-    private void fetchPedidos(Distrito distrito) {
-
-        Cloud.getPedidosValidacao(distrito, new GetObjectsListener() {
-
-            @Override
-            public void success(List<?> lista) {
-
-                ArrayList<Pedido> pedidos = new ArrayList<>();
-
-                for (int i = 0; i < lista.size(); i++) {
-
-                    Pedido pedido = (Pedido) lista.get(i);
-
-                    Ocorrencia ocorrencia = JsonUtil.mapper.convertValue(pedido.getServerOcorrencia(),
-                            new TypeReference<Ocorrencia>() {
-                            });
-
-                    pedido.setOcorrencia(ocorrencia);
-                    pedidos.add(pedido);
-                }
-
-                recyclerViewResults.setAdapter(new PedidosValidacaoListAdapter(pedidos, MyRequestsActivity.this));
-
-                Log.d("Pedidos", "recebi nr pedidos= " + pedidos.size());
-            }
-
-            @Override
-            public void error(String error) {
-                Toast.makeText(MyRequestsActivity.this, "Erro pedidos", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void showSemAlocacaoDialog() {
         new MaterialDialog.Builder(this)
@@ -188,7 +124,6 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
                 .cancelable(false)
                 .build().show();
 
-
     }
 
     @Override
@@ -197,7 +132,7 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
         if (resultCode == RESULT_OK) {
 
             Toast.makeText(this, "Actualizando lista", Toast.LENGTH_SHORT).show();
-            fetchPedidos(Cache.alocacao.getDistrito());
+            fetchMeusPedidos();
         }
     }
 }
