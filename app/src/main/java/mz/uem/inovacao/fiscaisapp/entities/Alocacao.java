@@ -3,8 +3,6 @@ package mz.uem.inovacao.fiscaisapp.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
-
 /**
  *
  */
@@ -15,8 +13,11 @@ public class Alocacao {
     private Distrito distrito;
     private Equipa equipa;
 
-    @JsonProperty("data_de_alocacao")
-    private String dataAlocacao;
+    @JsonProperty("data_inicio")
+    private String dataInicio;
+
+    @JsonProperty("data_fim")
+    private String dataFim;
     private String descricao;
 
     @JsonProperty("distrito_by_distrito_id")
@@ -30,12 +31,12 @@ public class Alocacao {
 
     }
 
-    public Alocacao(String id, Distrito distrito, Equipa equipa, String dataAlocacao, String descricao,
+    public Alocacao(String id, Distrito distrito, Equipa equipa, String dataInicio, String descricao,
                     Object serverDistrito, Object serverEquipa) {
         this.id = id;
         this.distrito = distrito;
         this.equipa = equipa;
-        this.dataAlocacao = dataAlocacao;
+        this.dataInicio = dataInicio;
         this.descricao = descricao;
         this.serverDistrito = serverDistrito;
         this.serverEquipa = serverEquipa;
@@ -65,12 +66,20 @@ public class Alocacao {
         this.equipa = equipa;
     }
 
-    public String getDataAlocacao() {
-        return dataAlocacao;
+    public String getDataInicio() {
+        return dataInicio;
     }
 
-    public void setDataAlocacao(String dataAlocacao) {
-        this.dataAlocacao = dataAlocacao;
+    public void setDataInicio(String dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public String getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(String dataFim) {
+        this.dataFim = dataFim;
     }
 
     public String getDescricao() {

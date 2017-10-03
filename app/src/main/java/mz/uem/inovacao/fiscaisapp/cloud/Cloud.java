@@ -277,10 +277,15 @@ public class Cloud {
 
         Log.d("Alocacao", "procurando entre: " + today + " e " + tomorrow);
 
-        FilterBuilder filter = new FilterBuilder()
+        /*FilterBuilder filter = new FilterBuilder()
                 .equalTo("equipa_id", equipa.getId() + "")
                 .and().biggerOrEquals("data_de_alocacao", today)
-                .and().smallerOrEquals("data_de_alocacao", tomorrow);
+                .and().smallerOrEquals("data_de_alocacao", tomorrow);*/
+
+        FilterBuilder filter = new FilterBuilder()
+                .equalTo("equipa_id", equipa.getId() + "")
+                .and().smallerOrEquals("data_inicio", today)
+                .and().biggerOrEquals("data_fim", today);
 
         getObjects("Alocacao", filter, new TypeReference<List<Alocacao>>() {
 

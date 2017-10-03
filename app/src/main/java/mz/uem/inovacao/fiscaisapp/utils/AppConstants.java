@@ -12,7 +12,7 @@ public class AppConstants {
     public static final String PWD = "mopa2017";
     public static final String SESSION_ID = "session_id";
     public static final String USER_TABLE = "user";
-    public static final String DOMAIN = "http://192.168.43.135:8080";
+    public static final String DOMAIN = "http://192.168.1.33:8080";
     public static final String DSP_URL = DOMAIN+"/api";
     public static final String USER_NAME = "USER_NAME";
     public static final String USER_ID = "USER_ID";
