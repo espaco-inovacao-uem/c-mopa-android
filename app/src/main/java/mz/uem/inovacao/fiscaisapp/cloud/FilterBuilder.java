@@ -33,11 +33,24 @@ public class FilterBuilder {
         return this;
     }
 
+    public FilterBuilder bigger(String key, String value) {
+
+        appendCondition(key, value, "%3E"); // key >= value
+        return this;
+
+    }
+
     public FilterBuilder biggerOrEquals(String key, String value) {
 
         appendCondition(key, value, "%3E%3D"); // key >= value
         return this;
 
+    }
+
+    public FilterBuilder smaller(String key, String value) {
+
+        appendCondition(key, value, "%3C"); // key <= value
+        return this;
     }
 
     public FilterBuilder smallerOrEquals(String key, String value) {

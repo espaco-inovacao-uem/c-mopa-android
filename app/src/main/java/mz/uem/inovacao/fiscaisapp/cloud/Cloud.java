@@ -1,7 +1,9 @@
 package mz.uem.inovacao.fiscaisapp.cloud;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -275,7 +277,7 @@ public class Cloud {
         String today = now.toString("yyyy-MM-dd");
         String tomorrow = now.plusDays(1).toString("yyyy-MM-dd");
 
-        Log.d("Alocacao", "procurando entre: " + today + " e " + tomorrow);
+        //Log.d("Alocacao", "procurando entre: " + today + " e " + tomorrow);
 
         /*FilterBuilder filter = new FilterBuilder()
                 .equalTo("equipa_id", equipa.getId() + "")
@@ -284,8 +286,8 @@ public class Cloud {
 
         FilterBuilder filter = new FilterBuilder()
                 .equalTo("equipa_id", equipa.getId() + "")
-                .and().smallerOrEquals("data_inicio", today)
-                .and().biggerOrEquals("data_fim", today);
+                .and().smaller("data_inicio", tomorrow)
+                .and().bigger("data_fim", today);
 
         getObjects("Alocacao", filter, new TypeReference<List<Alocacao>>() {
 
