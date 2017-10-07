@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import mz.uem.inovacao.fiscaisapp.dreamfactory.model.RecordsResponse;
 import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
 import mz.uem.inovacao.fiscaisapp.utils.AppConstants;
@@ -16,6 +17,15 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
     private GetObjectsListener getObjectsListener;
     private TypeReference typeReference;
     private FilterBuilder filterBuilder;
+    private int limit;
+    private String order;
+
+
+    public GetObjectsTask() {
+
+        limit = -1;
+        order = "";
+    }
 
     public void setFilterBuilder(FilterBuilder filterBuilder) {
         this.filterBuilder = filterBuilder;
@@ -33,6 +43,14 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
         this.objectClassName = objectClassName;
     }
 
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
     @Override
     protected void onPreExecute() {
 
@@ -46,8 +64,8 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
         dbApi.addHeader("X-DreamFactory-Api-Key", AppConstants.API_KEY);
         dbApi.setBasePath(AppConstants.DSP_URL + AppConstants.DSP_URL_SUFIX);
         try {
-            RecordsResponse records = dbApi.getRecords(objectClassName.toLowerCase(),null,filterBuilder.build()
-                    ,-1,-1,null,null,false,false,null,null,true,"*");
+            RecordsResponse records = dbApi.getRecords(objectClassName.toLowerCase(), null, filterBuilder.build()
+                    , limit, -1, order, null, false, false, null, null, true, "*");
             //log(records.toString());
             return records;
         } catch (Exception e) {
@@ -56,21 +74,22 @@ class GetObjectsTask extends AsyncTask<Void, RecordsResponse, RecordsResponse> {
         }
         return null;
     }
+
     @Override
     protected void onPostExecute(RecordsResponse records) {
-        if(records != null){
+        if (records != null) {
 
             ObjectMapper mapper = new ObjectMapper();
 
             List<?> objects = mapper.convertValue(records.getRecord(), typeReference);
 
-            if(records.getRecord().size() >= 0){
+            if (records.getRecord().size() >= 0) {
                 getObjectsListener.success(objects);
                 return;
             }
             getObjectsListener.error("");
 
-        }else{
+        } else {
             getObjectsListener.error("Falha");
         }
     }

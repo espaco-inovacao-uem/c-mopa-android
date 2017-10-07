@@ -85,15 +85,26 @@ public class Cloud {
         saveObjectTask.execute();
     }
 
-    public static void getObject() {
+    public static void getObjects(String objectClassName, FilterBuilder filterBuilder,
+                                  TypeReference typeReference, GetObjectsListener getObjectsListener) {
 
-    }
-
-    public static void getObjects(String objectClassName, FilterBuilder filterBuilder, TypeReference typeReference, GetObjectsListener getObjectsListener) {
         GetObjectsTask getObjectsTask = new GetObjectsTask();
         getObjectsTask.setObjectClassName(objectClassName);
-        getObjectsTask.setTypeReference(typeReference);
         getObjectsTask.setFilterBuilder(filterBuilder);
+        getObjectsTask.setTypeReference(typeReference);
+        getObjectsTask.setGetObjectsListener(getObjectsListener);
+        getObjectsTask.execute();
+    }
+
+    public static void getObjects(String objectClassName, FilterBuilder filterBuilder, int limit, String order,
+                                  TypeReference typeReference, GetObjectsListener getObjectsListener) {
+
+        GetObjectsTask getObjectsTask = new GetObjectsTask();
+        getObjectsTask.setObjectClassName(objectClassName);
+        getObjectsTask.setFilterBuilder(filterBuilder);
+        getObjectsTask.setLimit(limit);
+        getObjectsTask.setOrder(order);
+        getObjectsTask.setTypeReference(typeReference);
         getObjectsTask.setGetObjectsListener(getObjectsListener);
         getObjectsTask.execute();
     }
@@ -236,36 +247,36 @@ public class Cloud {
 
     public static void getEquipaOcorrencias(Equipa equipa, GetObjectsListener listener) {
 
-        DateTime now = DateTime.now();
+       /* DateTime now = DateTime.now();
         DateTime sevenDaysAgo = now.minusDays(7);
 
         String lowerDate = sevenDaysAgo.toString("yyyy-MM-dd");
-        String upperDate = now.toString("yyyy-MM-dd");
+        String upperDate = now.toString("yyyy-MM-dd");*/
 
         FilterBuilder filter = new FilterBuilder()
-                .equalTo("equipa_id", equipa.getId() + "")
-                .and().biggerOrEquals("data", lowerDate)
-                .and().smallerOrEquals("data", upperDate);
+                .equalTo("equipa_id", equipa.getId() + "");
+                /*.and().biggerOrEquals("data", lowerDate)
+                .and().smallerOrEquals("data", upperDate);*/
 
-        getObjects("Ocorrencia", filter, new TypeReference<List<Ocorrencia>>() {
+        getObjects("Ocorrencia", filter, 100, "data%20DESC", new TypeReference<List<Ocorrencia>>() {
         }, listener);
 
     }
 
     public static void getEquipaValidacoes(Equipa equipa, GetObjectsListener listener) {
 
-        DateTime now = DateTime.now();
+        /*DateTime now = DateTime.now();
         DateTime sevenDaysAgo = now.minusDays(7);
 
         String lowerDate = sevenDaysAgo.toString("yyyy-MM-dd");
-        String upperDate = now.toString("yyyy-MM-dd");
+        String upperDate = now.toString("yyyy-MM-dd");*/
 
         FilterBuilder filter = new FilterBuilder()
-                .equalTo("equipa_id", equipa.getId() + "")
-                .and().biggerOrEquals("data_de_registo", lowerDate)
-                .and().smallerOrEquals("data_de_registo", upperDate);
+                .equalTo("equipa_id", equipa.getId() + "");
+                /*.and().biggerOrEquals("data_de_registo", lowerDate)
+                .and().smallerOrEquals("data_de_registo", upperDate);*/
 
-        getObjects("Validacao", filter, new TypeReference<List<Validacao>>() {
+        getObjects("Validacao", filter, 100, "data_de_registo%20DESC", new TypeReference<List<Validacao>>() {
         }, listener);
 
     }
