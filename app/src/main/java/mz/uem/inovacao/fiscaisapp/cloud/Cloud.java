@@ -41,6 +41,7 @@ import mz.uem.inovacao.fiscaisapp.utils.BCrypt;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -281,12 +282,39 @@ public class Cloud {
 
     }
 
-    public static void getAlocacoesHoje(Equipa equipa, final CloudResponseListener<Alocacao> listener) {
 
-        DateTime now = DateTime.now();
+    public static Calendar getPreviousDayOfWeek(int dow){
+        Calendar date = Calendar.getInstance();
+        int diff =  date.get(Calendar.DAY_OF_WEEK) - dow;
+        if(!(diff >= 0)){
+            diff -= 7;
+        }
 
-        String today = now.toString("yyyy-MM-dd");
-        String tomorrow = now.plusDays(1).toString("yyyy-MM-dd");
+        date.add(Calendar.DAY_OF_MONTH,-diff);
+        return date;
+
+    }
+
+
+    public static Calendar  getNextDayOfWeek(int dow){
+        Calendar date = Calendar.getInstance();
+        int diff = dow - date.get(Calendar.DAY_OF_WEEK);
+        if(!(diff >= 0)){
+            diff += 7;
+        }
+
+        date.add(Calendar.DAY_OF_MONTH,diff);
+        return date;
+    }
+
+
+    public static void getAlocacoesEstaSemana(Equipa equipa, final CloudResponseListener<Alocacao> listener) {
+
+        DateTime previousSundayDate = new DateTime(getPreviousDayOfWeek(Calendar.SUNDAY).getTime());
+        DateTime nextSaturdayDate = new DateTime(getNextDayOfWeek(Calendar.SATURDAY).getTime());
+
+        String previousSundayText = previousSundayDate.toString("yyyy-MM-dd");
+        String nextSaturdayText = nextSaturdayDate.toString("yyyy-MM-dd");
 
         //Log.d("Alocacao", "procurando entre: " + today + " e " + tomorrow);
 
@@ -297,8 +325,8 @@ public class Cloud {
 
         FilterBuilder filter = new FilterBuilder()
                 .equalTo("equipa_id", equipa.getId() + "")
-                .and().smaller("data_inicio", tomorrow)
-                .and().bigger("data_fim", today);
+                .and().smaller("data_inicio", nextSaturdayText)
+                .and().bigger("data_fim", previousSundayText);
 
         getObjects("Alocacao", filter, new TypeReference<List<Alocacao>>() {
 

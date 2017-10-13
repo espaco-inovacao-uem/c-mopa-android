@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
@@ -20,17 +19,10 @@ import java.util.List;
 import mz.uem.inovacao.fiscaisapp.adapters.PedidosValidacaoListAdapter;
 import mz.uem.inovacao.fiscaisapp.cloud.Cloud;
 import mz.uem.inovacao.fiscaisapp.database.Cache;
-import mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil;
 import mz.uem.inovacao.fiscaisapp.entities.Alocacao;
 import mz.uem.inovacao.fiscaisapp.entities.Distrito;
-import mz.uem.inovacao.fiscaisapp.entities.Equipa;
-import mz.uem.inovacao.fiscaisapp.entities.Ocorrencia;
 import mz.uem.inovacao.fiscaisapp.entities.Pedido;
 import mz.uem.inovacao.fiscaisapp.listeners.CloudResponseListener;
-import mz.uem.inovacao.fiscaisapp.listeners.GetObjectsListener;
-import mz.uem.inovacao.fiscaisapp.utils.AppConstants;
-
-import static mz.uem.inovacao.fiscaisapp.dreamfactory.client.JsonUtil.mapper;
 
 public class MyRequestsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -57,7 +49,7 @@ public class MyRequestsActivity extends AppCompatActivity implements View.OnClic
     private void fetchMeusPedidos() {
 
         //1. Buscar todas alocacoes
-        Cloud.getAlocacoesHoje(Cache.equipa, new CloudResponseListener<Alocacao>() {
+        Cloud.getAlocacoesEstaSemana(Cache.equipa, new CloudResponseListener<Alocacao>() {
 
             @Override
             public void success(ArrayList<Alocacao> lista) {
